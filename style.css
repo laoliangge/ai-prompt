@@ -391,61 +391,60 @@ body {
     }
 }
 
-/* --- 极简大片模式 (最终精修版) --- */
+/* --- 📱 最终精修版：极紧凑、微圆角、小字贴边 --- */
 
-/* 1. 布局优化：双列，缝隙调小 */
 @media (max-width: 600px) {
+    
+    /* 1. 布局：缝隙极致缩小 */
     .gallery-container {
         column-count: 2 !important;
-        column-gap: 8px !important;  /* 缝隙更小 */
-        padding: 8px !important;     /* 屏幕边距更小 */
+        column-gap: 5px !important;  /* 【改小】间隙从8改到5 */
+        padding: 5px !important;     /* 【改小】两边留白也变小 */
+    }
+
+    /* 2. 隐藏多余信息 */
+    .card-tag, 
+    .card-prompt-preview {
+        display: none !important; 
+    }
+
+    /* 3. 卡片容器 */
+    .card {
+        border: none !important;
+        background: transparent !important;
+        margin-bottom: 5px !important; /* 【改小】上下间距变紧凑 */
+        position: relative !important;
+    }
+
+    /* 4. 图片圆角：微圆角 */
+    .card-img {
+        border-radius: 6px !important; /* 【改小】从12改到6，不再圆乎乎的 */
+        display: block !important;
+    }
+
+    /* 5. 黑色渐变层：更薄、更贴边 */
+    .card-content {
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        
+        /* 【关键】上25, 右4, 下4, 左4 -> 让字紧贴左下角 */
+        padding: 25px 4px 4px 4px !important; 
+        
+        background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%) !important;
+        border-radius: 0 0 6px 6px !important; /* 跟着图片一起变小 */
+        pointer-events: none !important;
+    }
+
+    /* 6. 标题文字：极小、贴边 */
+    .card-title {
+        color: #fff !important;
+        font-size: 10px !important;     /* 【改小】10px，非常秀气 */
+        font-weight: normal !important;
+        line-height: 1.1 !important;
+        margin: 0 !important;
+        text-align: left !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important; /* 加深投影，保证在白图上也看得清 */
     }
 }
-
-/* 2. 隐藏不需要的信息 */
-.card-tag, 
-.card-prompt-preview {
-    display: none !important; 
-}
-
-/* 3. 卡片容器：去边框，去背景 */
-.card {
-    border: none !important;
-    background: transparent !important;
-    margin-bottom: 8px !important;
-    position: relative !important; /* 这一句必须有 */
-}
-
-/* 4. 【关键】图片圆角：必须直接加在图片上 */
-.card-img {
-    border-radius: 12px !important; /* 让图片四个角都变圆 */
-    display: block !important;
-}
-
-/* 5. 黑色渐变层：贴在底部，保护文字 */
-.card-content {
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    
-    /* 调整渐变高度和内边距，让字更贴底 */
-    padding: 30px 8px 8px 8px !important; 
-    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%) !important;
-    
-    /* 只有下半部分有圆角，跟图片对齐 */
-    border-radius: 0 0 12px 12px !important; 
-    pointer-events: none !important; /* 点击穿透 */
-}
-
-/* 6. 【关键】标题文字：极小号，靠左 */
-.card-title {
-    color: #fff !important;
-    font-size: 11px !important;     /* 【改小】用像素控制更精准，很精致 */
-    font-weight: normal !important; /* 【变细】不要加粗 */
-    line-height: 1.2 !important;
-    margin: 0 !important;
-    text-align: left !important;    /* 强制靠左 */
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
-}
-
