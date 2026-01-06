@@ -6,85 +6,197 @@
     <title>发布工具 - AI PROMPT</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* admin 页面专用样式补充 */
-        body { padding-top: 80px; } /* 给固定导航栏留位置 */
-        
+        /* --- 页面整体布局 --- */
+        body {
+            padding-top: 80px;
+            background-color: #0f0f11;
+            /* 加一点背景光晕，更有氛围感 */
+            background-image: radial-gradient(circle at 50% 0%, #1e1e24 0%, #0f0f11 60%);
+            min-height: 100vh;
+        }
+
         .admin-container {
             max-width: 600px;
-            margin: 0 auto 40px;
+            margin: 0 auto 60px;
             padding: 20px;
+            animation: fadeIn 0.5s ease-out;
         }
 
+        /* --- 卡片容器：磨砂玻璃质感 --- */
         .form-card {
-            background: var(--card-bg); /* 复用你的卡片背景色 */
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
+            background: rgba(26, 26, 28, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
         }
 
-        .form-group { margin-bottom: 20px; }
-        
-        label { 
-            display: block; 
-            margin-bottom: 8px; 
-            color: #fff; 
-            font-weight: 600; 
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+            background: linear-gradient(to right, #fff, #a0a0a0);
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .form-group { margin-bottom: 24px; }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #d1d5db;
             font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
         }
 
-        /* 输入框样式 */
-        input, textarea { 
-            width: 100%; 
-            padding: 12px; 
-            background: #0f0f11; 
-            border: 1px solid #333; 
-            border-radius: 8px; 
-            color: #e2e2e2; 
-            font-family: inherit;
-            font-size: 14px;
-            box-sizing: border-box; /* 防止边框撑大 */
+        /* --- 输入框：更高级的深色 --- */
+        input, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: #141416;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+            box-sizing: border-box;
         }
-        
-        textarea { height: 150px; resize: vertical; line-height: 1.6; }
 
-        /* 文件选择按钮美化 */
+        /* 选中时光晕效果 */
+        input:focus, textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: #1a1a1c;
+        }
+
+        textarea { height: 140px; line-height: 1.6; resize: vertical; }
+
+        /* --- 图片选择器：去土味，换图标 --- */
         .file-select-box {
-            background: #252529;
+            position: relative;
+            background: #141416;
             border: 2px dashed #444;
-            border-radius: 8px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 30px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-        }
-        .file-select-box:active { background: #333; border-color: #6366f1; }
-        
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(to right, #4E75F6, #E94868); /* Gemini 渐变色 */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            margin-top: 10px;
-            cursor: pointer;
+            overflow: hidden;
         }
 
-        /* 结果展示区 */
-        .code-output {
-            margin-top: 20px;
-            background: #000;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            font-family: monospace; /* 代码字体 */
-            color: #a5f3fc;
-            white-space: pre-wrap; /* 允许换行 */
-            word-break: break-all;
-            position: relative;
+        .file-select-box:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
         }
+
+        /* 纯 CSS 画一个高级的上传图标 */
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 12px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12'/%3E%3C/svg%3E") no-repeat center/contain;
+            opacity: 0.8;
+        }
+
+        .upload-text { color: #888; font-size: 0.9rem; }
+        .upload-hint { color: #555; font-size: 0.75rem; margin-top: 6px; }
+
+        /* 选好图后的状态 */
+        .file-select-box.has-file {
+            border-style: solid;
+            border-color: #10b981; /* 绿色 */
+            background: rgba(16, 185, 129, 0.05);
+        }
+        .file-select-box.has-file .upload-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2310b981'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
+        }
+
+        /* --- 生成按钮：流光渐变 --- */
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4E75F6 0%, #E94868 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(233, 72, 104, 0.3);
+        }
+
+        .btn-submit:active { transform: scale(0.98); }
+
+        /* --- 结果显示区：代码编辑器风格 --- */
+        .result-container {
+            margin-top: 30px;
+            display: none; /* 默认隐藏 */
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .code-box-wrapper {
+            position: relative; /* 关键：给复制按钮定位 */
+            background: #0d0d0d;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* 那个“复制”按钮 */
+        .copy-btn-floating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn-floating:hover { background: rgba(255,255,255,0.2); }
+        
+        /* 复制成功的状态 */
+        .copy-btn-floating.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border-color: #34d399;
+        }
+
+        .code-content {
+            padding: 20px;
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #a5f3fc; /* 荧光蓝 */
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -112,90 +224,125 @@
 
     <div class="admin-container">
         <div class="form-card">
-            <h2 style="margin-bottom: 20px; text-align: center; color: #fff;">新内容生成器</h2>
+            <h2>内容生成器</h2>
 
             <div class="form-group">
-                <label>1. 标题 (Title)</label>
-                <input type="text" id="title" placeholder="例如：兰州拉面">
+                <label>1. 标题 / Title</label>
+                <input type="text" id="title" placeholder="给你的作品起个好听的名字">
             </div>
 
             <div class="form-group">
-                <label>2. 分类 (Category)</label>
+                <label>2. 分类 / Category</label>
                 <input type="text" id="category" placeholder="例如：美食 / 创意">
             </div>
 
             <div class="form-group">
-                <label>3. 选择图片 (Image)</label>
+                <label>3. 图片 / Image</label>
                 <input type="file" id="realFileInput" accept="image/*" style="display:none">
                 
-                <div class="file-select-box" onclick="document.getElementById('realFileInput').click()">
-                    <div style="font-size: 24px; margin-bottom: 8px;">📂</div>
-                    <div style="color: #a0a0a0; font-size: 14px;">点击选择手机/电脑图片</div>
-                    <div id="fileNameShow" style="color: #6366f1; margin-top: 8px; font-weight: bold;"></div>
+                <div class="file-select-box" id="dropZone" onclick="document.getElementById('realFileInput').click()">
+                    <div class="upload-icon"></div>
+                    <div class="upload-text" id="uploadText">点击选择图片</div>
+                    <div class="upload-hint">自动生成 images/ 路径</div>
                 </div>
-
-                <input type="text" id="imageUrl" placeholder="images/..." readonly style="margin-top: 10px; color:#666; font-size: 12px;">
-                <div style="font-size: 12px; color: #666; margin-top: 5px;">* 生成后请务必将该图片上传至 GitHub 的 images 文件夹</div>
+                
+                <input type="hidden" id="imageUrl">
             </div>
 
             <div class="form-group">
-                <label>4. 提示词 (Prompt)</label>
-                <textarea id="prompt" placeholder="在此粘贴你的 AI 提示词..."></textarea>
+                <label>4. 提示词 / Prompt</label>
+                <textarea id="prompt" placeholder="在此粘贴你的咒语..."></textarea>
             </div>
 
-            <button class="btn-submit" onclick="generateCode()">生成 JSON 代码</button>
+            <button class="btn-submit" onclick="generateCode()">✨ 生成 JSON 代码</button>
 
-            <div class="code-output" id="outputArea" style="display:none;">
-                <div style="margin-bottom: 10px; color: #666; font-size: 12px;">全选复制下面的代码，粘贴到 data.json 的 [ 后面：</div>
-                <div id="jsonResult"></div>
+            <div class="result-container" id="resultArea">
+                <div class="code-header">
+                    <span>生成成功！请复制下方代码：</span>
+                </div>
+                
+                <div class="code-box-wrapper">
+                    <button class="copy-btn-floating" id="copyBtn" onclick="copyToClipboard()">
+                        📋 复制
+                    </button>
+                    
+                    <pre class="code-content" id="jsonResult"></pre>
+                </div>
+                
+                <p style="text-align: center; font-size: 12px; color: #666; margin-top: 15px;">
+                    将复制的代码粘贴到 data.json 文件的最上方
+                </p>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. 监听文件选择，自动填路径
+        // 1. 监听文件选择
         document.getElementById('realFileInput').addEventListener('change', function(e) {
             if (e.target.files && e.target.files[0]) {
                 let file = e.target.files[0];
-                // 显示给人看的文件名
-                document.getElementById('fileNameShow').innerText = "已选中: " + file.name;
-                // 填入代码用的路径
+                let box = document.getElementById('dropZone');
+                let text = document.getElementById('uploadText');
+                
+                // 改变样式表示已选中
+                box.classList.add('has-file');
+                text.innerText = "已选中: " + file.name;
+                text.style.color = "#10b981";
+                
+                // 填入值
                 document.getElementById('imageUrl').value = "images/" + file.name;
             }
         });
 
-        // 2. 生成标准 JSON 代码
+        // 2. 生成 JSON
         function generateCode() {
-            // 获取输入值
             let title = document.getElementById('title').value || "未命名";
             let category = document.getElementById('category').value || "未分类";
             let imageUrl = document.getElementById('imageUrl').value;
             let prompt = document.getElementById('prompt').value || "暂无提示词";
 
             if (!imageUrl) {
-                alert("老梁，别忘了选图！虽然这里能生成代码，但你没图网页会开天窗的。");
+                alert("老梁，图还没选呢！");
                 imageUrl = ""; 
             }
 
-            // 构造对象
             let newItem = {
-                id: Date.now(), // 自动生成时间戳ID
+                id: Date.now(),
                 title: title,
                 category: category,
                 imageUrl: imageUrl,
                 prompt: prompt
             };
 
-            // 【关键】使用 JSON.stringify 自动生成标准美化格式
-            // 4个空格缩进，自动处理换行符
+            // 格式化代码
             let jsonString = JSON.stringify(newItem, null, 4);
-
-            // 在屁股后面加个逗号，方便粘贴
+            // 补个逗号
             jsonString = "    " + jsonString + ","; 
 
-            // 显示结果
-            document.getElementById('outputArea').style.display = 'block';
+            document.getElementById('resultArea').style.display = 'block';
             document.getElementById('jsonResult').innerText = jsonString;
+            
+            // 自动滚动到底部
+            document.getElementById('resultArea').scrollIntoView({behavior: "smooth"});
+        }
+
+        // 3. 一键复制功能
+        function copyToClipboard() {
+            const codeText = document.getElementById('jsonResult').innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                // 复制成功后的反馈
+                const btn = document.getElementById('copyBtn');
+                btn.innerText = "✅ 已复制";
+                btn.classList.add('success');
+                
+                // 2秒后恢复原状
+                setTimeout(() => {
+                    btn.innerText = "📋 复制";
+                    btn.classList.remove('success');
+                }, 2000);
+            }).catch(err => {
+                alert('复制失败，请手动长按复制');
+            });
         }
     </script>
 </body>
