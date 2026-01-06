@@ -382,3 +382,94 @@ body {
         padding: 20px;
     }
 }
+
+/* =========================================
+   手机端专属优化 (双列瀑布流 + 3D悬浮杂志感)
+   ========================================= */
+@media (max-width: 768px) {
+    
+    /* --- 1. 主页变成双列瀑布流 --- */
+    #gallery {
+        column-count: 2 !important; /* 强制分两列 */
+        column-gap: 10px !important; /* 列之间的缝隙 */
+        padding: 10px !important;
+        display: block !important; /* 覆盖掉原来的flex布局 */
+    }
+    
+    .gallery-item {
+        display: inline-block !important; /* 这一句是瀑布流的关键 */
+        width: 100% !important;
+        margin-bottom: 10px !important;
+        break-inside: avoid; /* 防止图片被切断 */
+    }
+
+    /* --- 2. 详情页布局：上下结构 --- */
+    .modal-content {
+        flex-direction: column !important;
+        background: #f5f5f5 !important;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+    }
+
+    /* --- 3. 图片区域：3D 透视舞台 --- */
+    .modal-image-container {
+        width: 100% !important;
+        height: 55vh !important; /* 图片区域占屏幕一半多一点 */
+        background: #e0e0e0; /* 浅灰背景 */
+        perspective: 1000px !important; /* 【核心】开启3D透视 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px; /* 给图片留点呼吸空间 */
+        overflow: hidden;
+    }
+
+    /* --- 4. 图片本体：悬浮杂志效果 --- */
+    .modal-image {
+        width: auto !important;
+        height: auto !important;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain !important; /* 【重点】保证图片不被裁剪，完整显示！ */
+        border-radius: 8px !important;
+        
+        /* 3D 姿态：稍微侧一点，加阴影 */
+        transform: rotateY(-8deg) rotateX(5deg) scale(0.95); 
+        box-shadow: 10px 15px 30px rgba(0,0,0,0.25) !important; 
+        transition: all 0.3s ease-out; /* 动效要丝滑 */
+    }
+
+    /* 交互：手指按住时，回正 */
+    .modal-image:active {
+        transform: rotateY(0deg) rotateX(0deg) scale(1.0);
+        box-shadow: 0px 5px 10px rgba(0,0,0,0.2) !important;
+    }
+
+    /* --- 5. 文字区域：抽屉式上拉 --- */
+    .modal-info {
+        width: 100% !important;
+        background: white;
+        border-radius: 20px 20px 0 0; /* 圆角 */
+        padding: 25px !important;
+        margin-top: -40px; /* 【核心】往上提，盖住图片底部，制造层次感 */
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        position: relative;
+        z-index: 100;
+        min-height: 50vh; /* 保证文字区域够长 */
+    }
+
+    /* 关闭按钮微调 */
+    .close-button {
+        top: 15px;
+        right: 15px;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+    }
+}
+
