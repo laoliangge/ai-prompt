@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布工具 - AI Prompt Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f11;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .output-area {
+            margin-top: 30px;
+            background: #000;
+            padding: 20px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .code-block {
+            color: #4ade80;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+        .copy-output-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .random-btn {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 0 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+        .input-group {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <span class="logo-text">发布工具 Admin</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">返回画廊</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="form-group">
+            <label class="form-label">标题 (中文)</label>
+            <input type="text" id="inputTitle" class="form-input" placeholder="例如：赛博朋克猫咪">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">分类</label>
+            <input type="text" id="inputCategory" class="form-input" placeholder="例如：动物 / 科幻">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">图片链接</label>
+            <div class="input-group">
+                <input type="text" id="inputImage" class="form-input" placeholder="https://...">
+                <button class="random-btn" onclick="setRandomImage()">随机图</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">提示词内容</label>
+            <textarea id="inputPrompt" class="form-textarea" placeholder="在此粘贴 Prompt..."></textarea>
+        </div>
+
+        <button class="btn-primary" onclick="generateJSON()">生成 JSON 代码</button>
+
+        <div class="output-area">
+            <button class="copy-output-btn" onclick="copyOutput()">复制</button>
+            <div class="code-block" id="outputCode">// 代码将显示在这里...</div>
+        </div>
+    </div>
+
+    <script>
+        function setRandomImage() {
+            const id = Math.floor(Math.random() * 1000);
+            document.getElementById('inputImage').value = `https://picsum.photos/800/1000?random=${id}`;
+        }
+
+        function generateJSON() {
+            const title = document.getElementById('inputTitle').value;
+            const category = document.getElementById('inputCategory').value;
+            const imageUrl = document.getElementById('inputImage').value;
+            const prompt = document.getElementById('inputPrompt').value;
+
+            if(!title || !prompt) {
+                alert("请至少填写标题和提示词！");
+                return;
+            }
+
+            const data = {
+                id: Date.now().toString(),
+                title: title,
+                category: category,
+                imageUrl: imageUrl,
+                prompt: prompt
+            };
+
+            const jsonStr = JSON.stringify(data, null, 4);
+            document.getElementById('outputCode').textContent = jsonStr + ","; // 加个逗号方便粘贴
+        }
+
+        function copyOutput() {
+            const code = document.getElementById('outputCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert("复制成功！请粘贴到 data.json 文件数组中。");
+            });
+        }
+    </script>
+</body>
+</html>
