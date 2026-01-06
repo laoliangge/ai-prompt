@@ -418,7 +418,7 @@ body {
 
     /* 4. 图片圆角：【关键】改到 8px */
     .card-img {
-        border-radius: 8px !important; /* 8px 是最舒服的圆角大小 */
+        border-radius: 6px !important; /* 8px 是最舒服的圆角大小 */
         display: block !important;
     }
 
@@ -430,7 +430,7 @@ body {
         width: 100% !important;
         
         /* 【关键】上40, 右10, 下10, 左10 -> 给文字留出呼吸空间 */
-        padding: 40px 10px 6px 10px !important; 
+        padding: 40px 10px 4px 6px !important; 
         
         background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%) !important;
         border-radius: 0 0 8px 8px !important; /* 跟图片对齐 */
@@ -448,4 +448,5 @@ body {
         text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important; /* 投影加深一点点 */
     }
 }
+
 
