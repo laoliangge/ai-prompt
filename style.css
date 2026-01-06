@@ -449,4 +449,44 @@ body {
     }
 }
 
+/* --- 📱 详情页弹窗：手机端大图修复补丁 --- */
+@media (max-width: 768px) {
+    
+    /* 1. 弹窗容器：允许滚动，不再卡死高度 */
+    .modal-content {
+        flex-direction: column !important; /* 上下排 */
+        height: auto !important;           /* 高度随内容自动撑开 */
+        max-height: 90vh !important;       /* 给点限制，别超屏太多 */
+        overflow-y: auto !important;       /* 内容多了可以滑 */
+    }
+
+    /* 2. 图片区域：去掉限制，宽度撑满 */
+    .modal-image-container {
+        flex: none !important;     /* 解除弹性束缚 */
+        width: 100% !important;    /* 宽度占满 */
+        height: auto !important;   /* 高度自动！ */
+        padding: 0 !important;     /* 去掉内边距 */
+        background: #000 !important; /* 黑色背景 */
+    }
+
+    /* 3. 图片本体：贴合宽度，自然显示 */
+    #modalImage {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 60vh !important; /* 限制最大高度，防止长图占满全屏 */
+        object-fit: contain !important; /* 保证显示全貌 */
+        display: block !important;
+        margin: 0 auto !important;
+    }
+
+    /* 4. 文字区域：给足空间 */
+    .modal-info {
+        flex: none !important;
+        width: 100% !important;
+        padding: 20px !important;
+        overflow-y: visible !important;
+    }
+}
+
+
 
