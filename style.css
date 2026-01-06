@@ -473,3 +473,72 @@ body {
     }
 }
 
+/* --- 🚑 紧急修复补丁：回归全屏大图模式 --- */
+@media (max-width: 768px) {
+    
+    /* 1. 整个弹窗铺满屏幕 */
+    .modal-content {
+        flex-direction: column !important; /* 上下排列 */
+        width: 100% !important;
+        height: 100% !important; /* 占满全屏 */
+        top: 0 !important;
+        left: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        background: #000 !important; /* 纯黑背景，显图清楚 */
+    }
+
+    /* 2. 图片区域：取消花哨特效，简单粗暴 */
+    .modal-image-container {
+        width: 100% !important;
+        height: auto !important; /* 高度随图片定 */
+        min-height: 40vh; /* 最小占屏幕40% */
+        background: #000 !important;
+        padding: 0 !important;
+        display: block !important; /* 取消弹性布局，防止图片缩放 */
+        perspective: none !important; /* 关掉3D */
+    }
+
+    /* 3. 图片本体：撑满宽度 */
+    .modal-image {
+        width: 100% !important;
+        height: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        object-fit: contain !important;
+        transform: none !important; /* 关掉旋转 */
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    /* 4. 文字区域：白底黑字，贴在下面 */
+    .modal-info {
+        width: 100% !important;
+        background: #fff !important; /* 改回白色背景 */
+        padding: 20px !important;
+        margin-top: 0 !important; /* 取消重叠 */
+        box-shadow: none !important;
+        min-height: 50vh; /* 保证下面有足够空间 */
+    }
+
+    /* 5. 【关键】关闭按钮：强行固定在屏幕右上角 */
+    .close-button {
+        position: fixed !important; /* 钉死在屏幕上 */
+        top: 20px !important;
+        right: 20px !important;
+        z-index: 99999 !important; /* 层级最高，谁也挡不住 */
+        background: rgba(255, 255, 255, 0.9) !important; /* 白色圆底 */
+        color: #000 !important; /* 黑色叉号 */
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        font-size: 30px !important;
+        line-height: 40px !important;
+        text-align: center !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3) !important;
+        display: block !important; /* 确保显示 */
+    }
+}
+
+
+
