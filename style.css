@@ -391,15 +391,15 @@ body {
     }
 }
 
-/* --- 📱 最终精修版：极紧凑、微圆角、小字贴边 --- */
+/* --- 📱 最终黄金平衡版：参数已微调 --- */
 
 @media (max-width: 600px) {
     
-    /* 1. 布局：缝隙极致缩小 */
+    /* 1. 布局：间距适中 */
     .gallery-container {
         column-count: 2 !important;
-        column-gap: 5px !important;  /* 【改小】间隙从8改到5 */
-        padding: 5px !important;     /* 【改小】两边留白也变小 */
+        column-gap: 8px !important;  /* 8px 间距，不挤也不空 */
+        padding: 8px !important;
     }
 
     /* 2. 隐藏多余信息 */
@@ -412,39 +412,39 @@ body {
     .card {
         border: none !important;
         background: transparent !important;
-        margin-bottom: 5px !important; /* 【改小】上下间距变紧凑 */
+        margin-bottom: 8px !important; /* 上下间距跟左右保持一致 */
         position: relative !important;
     }
 
-    /* 4. 图片圆角：微圆角 */
+    /* 4. 图片圆角：【关键】改到 8px */
     .card-img {
-        border-radius: 6px !important; /* 【改小】从12改到6，不再圆乎乎的 */
+        border-radius: 8px !important; /* 8px 是最舒服的圆角大小 */
         display: block !important;
     }
 
-    /* 5. 黑色渐变层：更薄、更贴边 */
+    /* 5. 黑色渐变层：位置往回拉一点 */
     .card-content {
         position: absolute !important;
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
         
-        /* 【关键】上25, 右4, 下4, 左4 -> 让字紧贴左下角 */
-        padding: 25px 4px 4px 4px !important; 
+        /* 【关键】上40, 右10, 下10, 左10 -> 给文字留出呼吸空间 */
+        padding: 40px 10px 10px 10px !important; 
         
-        background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%) !important;
-        border-radius: 0 0 6px 6px !important; /* 跟着图片一起变小 */
+        background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%) !important;
+        border-radius: 0 0 8px 8px !important; /* 跟图片对齐 */
         pointer-events: none !important;
     }
 
-    /* 6. 标题文字：极小、贴边 */
+    /* 6. 标题文字：【关键】加大、加粗 */
     .card-title {
         color: #fff !important;
-        font-size: 10px !important;     /* 【改小】10px，非常秀气 */
-        font-weight: normal !important;
-        line-height: 1.1 !important;
+        font-size: 13px !important;     /* 【加大】13px，清晰可见 */
+        font-weight: 600 !important;    /* 【加粗】稍微厚重一点，显眼 */
+        line-height: 1.2 !important;
         margin: 0 !important;
         text-align: left !important;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important; /* 加深投影，保证在白图上也看得清 */
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important; /* 投影加深一点点 */
     }
 }
