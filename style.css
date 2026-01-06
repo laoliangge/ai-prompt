@@ -449,42 +449,71 @@ body {
     }
 }
 
-/* --- 🚑 详情页急救包：去黑边 + 保证有字 (最终版) --- */
+/* --- 🚑 详情页终极修复：悬浮X号 + 强制显示文字 --- */
 @media (max-width: 768px) {
-    
-    /* 1. 弹窗容器：允许上下滚动 */
+
+    /* 1. 【霸道】关闭按钮：钉死在右上角，加黑底，显眼！ */
+    .close-btn {
+        position: fixed !important;   /* 钉死在屏幕上，不随图片滚动 */
+        top: 20px !important;
+        right: 20px !important;
+        z-index: 9999 !important;     /* 层级最高 */
+        
+        background: rgba(0,0,0,0.6) !important; /* 半透明黑底 */
+        color: #ffffff !important;    /* 纯白叉号 */
+        width: 40px !important;       /* 大一点 */
+        height: 40px !important;
+        border-radius: 50% !important; /* 圆形 */
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255,255,255,0.3) !important; /* 加个白圈 */
+    }
+
+    /* 2. 弹窗容器：开启整页滚动 */
     .modal-content {
-        flex-direction: column !important; /* 强制上下排 */
-        height: auto !important;           /* 高度自动 */
-        min-height: 100vh !important;      /* 占满一屏 */
-        border-radius: 0 !important;       /* 手机上不要圆角 */
+        flex-direction: column !important;
+        height: 100% !important;      /* 占满屏幕 */
+        border-radius: 0 !important;
+        overflow-y: auto !important;  /* 【核心】允许上下滚动查看提示词 */
+        background: #1a1a1c !important;
     }
 
-    /* 2. 图片外框：取消固定比例 */
+    /* 3. 图片区域：自然撑开，不留黑边 */
     .modal-image-container {
-        flex: none !important;    
-        width: 100% !important;   
-        height: auto !important;  
-        padding: 0 !important;    /* 去掉黑边 */
-        background: #000 !important; 
+        flex: none !important;
+        width: 100% !important;
+        height: auto !important;
+        padding: 0 !important;
+        background: #000 !important;
     }
 
-    /* 3. 图片本体：自然显示 */
     #modalImage {
         width: 100% !important;
         height: auto !important;
-        max-height: none !important; /* 【核心】解除高度限制，长图也能全显示 */
-        object-fit: contain !important; 
+        max-height: none !important;  /* 长图也全部显示 */
+        object-fit: contain !important;
         display: block !important;
     }
 
-    /* 4. 文字区域：跟在图片下面 */
+    /* 4. 文字区域：强制白色，防止消失 */
     .modal-info {
         flex: none !important;
         width: 100% !important;
         height: auto !important;
-        padding: 20px !important;
-        background: #1a1a1c !important; 
-        overflow: visible !important;   /* 保证文字显示 */
+        padding: 25px 20px 100px 20px !important; /* 底部多留点空，防止滑到底看不见 */
+        background: #1a1a1c !important;
+        color: #ffffff !important;    /* 【核心】强制文字变白 */
+        opacity: 1 !important;        /* 强制不透明 */
+        display: block !important;    /* 强制显示 */
+    }
+
+    /* 5. 确保里面所有的字都是白的 */
+    .modal-info h2, 
+    .modal-info p, 
+    .modal-info span, 
+    .prompt-content {
+        color: #e0e0e0 !important;
+        display: block !important;
     }
 }
