@@ -391,3 +391,43 @@ body {
     }
 }
 
+/* --- 极简大片模式：标题浮在图片左下角 --- */
+
+/* 1. 隐藏多余信息 (分类、提示词) */
+.card-tag, 
+.card-prompt-preview {
+    display: none !important; 
+}
+
+/* 2. 卡片去边框，变成纯图片展示 */
+.card {
+    border: none !important;
+    background: transparent !important; /* 去掉卡片背景色 */
+    margin-bottom: 10px !important;     /* 保持间距 */
+}
+
+/* 3. 核心：让文字层“绝对定位”覆盖在图片底部 */
+.card-content {
+    position: absolute !important;      /* 浮起来 */
+    bottom: 0 !important;               /* 贴底 */
+    left: 0 !important;                 /* 靠左 */
+    width: 100% !important;             /* 撑满宽度 */
+    padding: 40px 12px 12px 12px !important; /* 给渐变留出空间 */
+    
+    /* 制作一个从黑到透明的渐变，防止图片太白看不清字 */
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%) !important;
+    
+    border-radius: 0 0 12px 12px !important; /* 底部圆角要跟图片对齐 */
+    pointer-events: none !important;    /* 此时点击穿透，不影响点图片 */
+}
+
+/* 4. 标题样式：白色、靠左、加阴影 */
+.card-title {
+    color: #fff !important;             /* 纯白字 */
+    font-size: 0.95rem !important;      /* 大小适中 */
+    font-weight: 600 !important;
+    text-align: left !important;        /* 【关键】靠左对齐 */
+    margin: 0 !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important; /* 加点文字投影，更清晰 */
+}
+
