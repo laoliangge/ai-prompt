@@ -50,7 +50,11 @@ body {
     font-weight: 700;
     font-size: 1.2rem;
 }
-
+.logo svg {
+    width: 28px;
+    height: 28px;
+    margin-right: 4px; /* 让图标和“AI PROMPT”这几个字保持点距离 */
+}
 .logo-text {
     background: linear-gradient(to right, #fff, #a0a0a0);
     -webkit-background-clip: text;
@@ -473,3 +477,4 @@ body {
         padding-right: 20px !important; /* 手机上保持原样，靠 margin-left 来省空间 */
     }
 }
+
