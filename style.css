@@ -1,251 +1,175 @@
 /* =========================================
-   1. 全局基础设置 (Base)
+   全局基础 (Base)
    ========================================= */
 body {
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #121212; /* 深色背景，高端 */
-    color: #e0e0e0;
+    background-color: #000; /* 全局纯黑背景 */
+    color: #fff;
+    font-family: sans-serif;
 }
 
 header {
-    background-color: #1e1e1e;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: #111;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #333;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
 .logo {
     font-size: 1.2rem;
     font-weight: bold;
     color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.nav-links a {
-    color: #aaa;
-    text-decoration: none;
-    margin-left: 20px;
-    font-size: 0.9rem;
 }
 
 /* =========================================
-   2. 瀑布流画廊 (Gallery Grid)
+   列表页 (Gallery List) - 单排朋友圈模式
    ========================================= */
 #gallery {
-    /* 核心：使用多列布局实现瀑布流 */
-    column-count: 2; /* 手机默认两列 */
-    column-gap: 15px;
-    padding: 15px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* 电脑端变4列 */
-@media (min-width: 768px) {
-    #gallery {
-        column-count: 4;
-    }
+    display: flex;
+    flex-direction: column; /* 手机强制竖排，一张一行 */
+    padding: 0;
+    gap: 30px; /* 每张图之间留空隙 */
+    max-width: 600px; /* 限制最大宽度 */
+    margin: 0 auto; /* 居中 */
 }
 
 .gallery-item {
-    background-color: #1e1e1e;
-    border-radius: 12px;
-    margin-bottom: 15px; /* 上下间距 */
-    overflow: hidden;
-    break-inside: avoid; /* 防止图片被切断 */
-    position: relative; /* 为了标题定位 */
+    position: relative;
+    background: #000;
     cursor: pointer;
-    transition: transform 0.2s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-.gallery-item:active {
-    transform: scale(0.98); /* 按下微缩效果 */
-}
-
-/* 列表页图片：裁剪得整整齐齐 */
+/* 1. 图片：宽度拉满 */
 .gallery-item img {
     width: 100%;
     height: auto;
     display: block;
-    object-fit: cover;
+    /* 不裁剪，原图显示 */
 }
 
-/* =========================================
-   3. 列表页文字：只显标题 (Title Only)
-   ========================================= */
+/* 2. 列表页文字：只留左下角标题 */
 .item-info {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    padding: 40px 10px 10px 10px; /* 上方留空给渐变 */
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); /* 黑色渐变罩 */
-    pointer-events: none; /* 让点击能穿透到图片 */
+    padding: 50px 20px 15px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); /* 渐变黑罩子 */
 }
 
 .item-info h3 {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
-.item-info p {
-    display: none; /* 【核心】在列表页隐藏提示词！ */
-}
-
+/* 【核心修正】暴力隐藏列表页的所有描述文字 */
+.item-info p, 
+.gallery-item p, 
 .category-tag {
-    display: none; /* 列表页太挤，分类标签也先藏起来 */
+    display: none !important; /* 只要是P标签，统统消失！ */
 }
 
 /* =========================================
-   4. 详情弹窗 (Modal) - 手机大片模式
+   详情弹窗 (Modal) - 全屏沉浸模式
    ========================================= */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.95); /* 深黑背景 */
-    overflow-y: auto; /* 允许滚动 */
-    padding-top: 0; /* 手机端顶满 */
+    background-color: #000; /* 纯黑底 */
+    overflow-y: auto; /* 允许上下滚动 */
 }
 
 .modal-content {
-    background-color: #1e1e1e;
-    margin: 0;
-    width: 100%;
-    min-height: 100%; /* 占满全屏 */
     display: flex;
-    flex-direction: column; /* 手机端：上图下文 */
-    position: relative;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
 }
 
 /* 图片区域 */
 .modal-image-container {
     width: 100%;
-    background-color: #000;
+    background: #000;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 20px 0;
+    padding-top: 60px; /* 给关闭按钮留位置 */
+    padding-bottom: 20px;
 }
 
-/* 详情页图片：完整显示，不裁剪 */
 .modal-image {
     width: 100%;
     height: auto;
-    max-height: 70vh; /* 防止太长 */
-    object-fit: contain; /* 保证显示全貌 */
+    object-fit: contain; /* 保证完整显示 */
 }
 
 /* 文字区域 */
 .modal-info {
-    padding: 25px;
-    background: #1e1e1e;
-    color: #eee;
-    padding-bottom: 80px; /* 底部留空防止遮挡 */
+    padding: 20px;
+    background: #111; /* 深灰底，区分图片 */
+    padding-bottom: 100px;
 }
 
 .modal-info h2 {
     margin-top: 0;
-    font-size: 1.5rem;
     color: #fff;
-    border-left: 4px solid #7c4dff; /* 紫色装饰线 */
+    border-left: 4px solid #007aff; /* 蓝条装饰 */
     padding-left: 10px;
 }
 
-/* 详情页里要把刚才藏起来的提示词显示出来 */
+/* 详情页里，把刚才藏起来的文字显示出来 */
 .modal-info p {
-    display: block !important;
-    line-height: 1.6;
+    display: block !important; /* 复活文字 */
     color: #ccc;
-    background: #2a2a2a;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    white-space: pre-wrap; /* 保持格式 */
+    background: #222;
     padding: 15px;
     border-radius: 8px;
     margin-top: 15px;
-    white-space: pre-wrap; /* 保留换行格式 */
-    font-family: monospace; /* 代码字体 */
-    font-size: 0.9rem;
-}
-
-.modal-category {
-    display: inline-block;
-    background: #333;
-    color: #7c4dff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    margin-bottom: 10px;
 }
 
 /* =========================================
-   5. 关闭按钮 (Close Button)
+   关闭按钮 (X) - 红色显眼版
    ========================================= */
 .close-button {
     position: fixed; /* 钉死在屏幕上 */
-    top: 20px;
-    right: 20px;
+    top: 15px;
+    right: 15px;
     width: 40px;
     height: 40px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.8); /* 红色半透明底 */
     color: #fff;
-    font-size: 28px;
-    text-align: center;
+    font-size: 30px;
     line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
+    z-index: 100000; /* 层级最高 */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
     cursor: pointer;
-    z-index: 9999;
-    backdrop-filter: blur(5px); /* 毛玻璃特效 */
 }
 
 /* =========================================
-   6. 电脑端适配 (Desktop)
+   电脑端简单的适配
    ========================================= */
-@media (min-width: 769px) {
-    .modal { padding-top: 50px; }
-    
-    .modal-content {
-        flex-direction: row; /* 电脑端左右排 */
-        width: 90%;
+@media (min-width: 768px) {
+    #gallery {
+        flex-direction: row;
+        flex-wrap: wrap;
         max-width: 1200px;
-        height: 80vh;
-        margin: 0 auto;
-        border-radius: 12px;
-        overflow: hidden;
     }
-
-    .modal-image-container {
-        width: 60%;
-        height: 100%;
-        padding: 0;
-        background: #000;
-    }
-
-    .modal-image {
-        max-height: 100%;
-    }
-
-    .modal-info {
-        width: 40%;
-        overflow-y: auto;
+    .gallery-item {
+        width: calc(25% - 30px); /* 一行4个 */
     }
 }
-
-
-
-
