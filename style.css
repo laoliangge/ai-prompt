@@ -449,44 +449,42 @@ body {
     }
 }
 
-/* --- 📱 详情页弹窗：手机端大图修复补丁 --- */
+/* --- 🚑 详情页急救包：去黑边 + 保证有字 (最终版) --- */
 @media (max-width: 768px) {
     
-    /* 1. 弹窗容器：允许滚动，不再卡死高度 */
+    /* 1. 弹窗容器：允许上下滚动 */
     .modal-content {
-        flex-direction: column !important; /* 上下排 */
-        height: auto !important;           /* 高度随内容自动撑开 */
-        max-height: 90vh !important;       /* 给点限制，别超屏太多 */
-        overflow-y: auto !important;       /* 内容多了可以滑 */
+        flex-direction: column !important; /* 强制上下排 */
+        height: auto !important;           /* 高度自动 */
+        min-height: 100vh !important;      /* 占满一屏 */
+        border-radius: 0 !important;       /* 手机上不要圆角 */
     }
 
-    /* 2. 图片区域：去掉限制，宽度撑满 */
+    /* 2. 图片外框：取消固定比例 */
     .modal-image-container {
-        flex: none !important;     /* 解除弹性束缚 */
-        width: 100% !important;    /* 宽度占满 */
-        height: auto !important;   /* 高度自动！ */
-        padding: 0 !important;     /* 去掉内边距 */
-        background: #000 !important; /* 黑色背景 */
+        flex: none !important;    
+        width: 100% !important;   
+        height: auto !important;  
+        padding: 0 !important;    /* 去掉黑边 */
+        background: #000 !important; 
     }
 
-    /* 3. 图片本体：贴合宽度，自然显示 */
+    /* 3. 图片本体：自然显示 */
     #modalImage {
         width: 100% !important;
         height: auto !important;
-        max-height: 60vh !important; /* 限制最大高度，防止长图占满全屏 */
-        object-fit: contain !important; /* 保证显示全貌 */
+        max-height: none !important; /* 【核心】解除高度限制，长图也能全显示 */
+        object-fit: contain !important; 
         display: block !important;
-        margin: 0 auto !important;
     }
 
-    /* 4. 文字区域：给足空间 */
+    /* 4. 文字区域：跟在图片下面 */
     .modal-info {
         flex: none !important;
         width: 100% !important;
+        height: auto !important;
         padding: 20px !important;
-        overflow-y: visible !important;
+        background: #1a1a1c !important; 
+        overflow: visible !important;   /* 保证文字显示 */
     }
 }
-
-
-
