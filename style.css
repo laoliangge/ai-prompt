@@ -98,7 +98,15 @@ body {
 
 @media (max-width: 1200px) { .gallery-container { column-count: 3; } }
 @media (max-width: 900px) { .gallery-container { column-count: 2; } }
-@media (max-width: 600px) { .gallery-container { column-count: 1; } }
+@media (max-width: 600px) { 
+    .gallery-container { 
+        column-count: 2;   /* 强制变2列 */
+        column-gap: 10px;  /* 间隙调小 */
+        padding: 10px;     /* 边距调小 */
+    } 
+    /* 手机上隐藏预览文字，防止长短不一 */
+    .card-prompt-preview { display: none; }
+}
 
 .loading {
     text-align: center;
@@ -382,3 +390,4 @@ body {
         padding: 20px;
     }
 }
+
