@@ -3,179 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>发布工具 - AI Prompt Gallery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>发布工具 - AI PROMPT</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* admin 页面专用样式补充 */
+        body { padding-top: 80px; } /* 给固定导航栏留位置 */
+        
         .admin-container {
-            max-width: 800px;
-            margin: 80px auto;
-            padding: 30px;
-            background: var(--card-bg);
-            border-radius: 16px;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: var(--card-bg); /* 复用你的卡片背景色 */
             border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
+
+        .form-group { margin-bottom: 20px; }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            color: #fff; 
+            font-weight: 600; 
             font-size: 0.9rem;
         }
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 12px;
-            background: #0f0f11;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: #fff;
+
+        /* 输入框样式 */
+        input, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            background: #0f0f11; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            color: #e2e2e2; 
             font-family: inherit;
+            font-size: 14px;
+            box-sizing: border-box; /* 防止边框撑大 */
         }
-        .form-textarea {
-            resize: vertical;
-            min-height: 120px;
+        
+        textarea { height: 150px; resize: vertical; line-height: 1.6; }
+
+        /* 文件选择按钮美化 */
+        .file-select-box {
+            background: #252529;
+            border: 2px dashed #444;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-        .btn-primary {
+        .file-select-box:active { background: #333; border-color: #6366f1; }
+        
+        .btn-submit {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(to right, #6366f1, #a855f7);
+            background: linear-gradient(to right, #4E75F6, #E94868); /* Gemini 渐变色 */
             color: white;
             border: none;
             border-radius: 8px;
+            font-weight: bold;
             font-size: 1rem;
-            font-weight: 600;
+            margin-top: 10px;
             cursor: pointer;
-            transition: opacity 0.2s;
         }
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-        .output-area {
-            margin-top: 30px;
+
+        /* 结果展示区 */
+        .code-output {
+            margin-top: 20px;
             background: #000;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            position: relative;
-        }
-        .code-block {
-            color: #4ade80;
-            font-family: monospace;
-            white-space: pre-wrap;
+            border: 1px solid #333;
+            font-family: monospace; /* 代码字体 */
+            color: #a5f3fc;
+            white-space: pre-wrap; /* 允许换行 */
             word-break: break-all;
-            font-size: 0.9rem;
-        }
-        .copy-output-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .random-btn {
-            background: #333;
-            color: #fff;
-            border: none;
-            padding: 0 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 8px;
-        }
-        .input-group {
-            display: flex;
+            position: relative;
         }
     </style>
 </head>
 <body>
+
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
-                <span class="logo-text">发布工具 Admin</span>
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4C14 9 15 10 20 12C15 14 14 15 12 20C10 15 9 14 4 12C9 10 10 9 12 4Z" fill="url(#gemini-gradient)"/>
+                    <defs>
+                        <linearGradient id="gemini-gradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#4E75F6"/>
+                            <stop offset="100%" stop-color="#E94868"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="logo-text">AI PROMPT</span>
             </div>
             <div class="nav-links">
-                <a href="index.html">返回画廊</a>
+                <a href="index.html">产品</a>
+                <a href="admin.html" class="active" style="color:#fff;">发布工具</a>
             </div>
         </div>
     </nav>
 
     <div class="admin-container">
-        <div class="form-group">
-            <label class="form-label">标题 (中文)</label>
-            <input type="text" id="inputTitle" class="form-input" placeholder="例如：赛博朋克猫咪">
-        </div>
-        
-        <div class="form-group">
-            <label class="form-label">分类</label>
-            <input type="text" id="inputCategory" class="form-input" placeholder="例如：动物 / 科幻">
-        </div>
+        <div class="form-card">
+            <h2 style="margin-bottom: 20px; text-align: center; color: #fff;">新内容生成器</h2>
 
-        <div class="form-group">
-            <label class="form-label">图片链接</label>
-            <div class="input-group">
-                <input type="text" id="inputImage" class="form-input" placeholder="https://...">
-                <button class="random-btn" onclick="setRandomImage()">随机图</button>
+            <div class="form-group">
+                <label>1. 标题 (Title)</label>
+                <input type="text" id="title" placeholder="例如：兰州拉面">
             </div>
-        </div>
 
-        <div class="form-group">
-            <label class="form-label">提示词内容</label>
-            <textarea id="inputPrompt" class="form-textarea" placeholder="在此粘贴 Prompt..."></textarea>
-        </div>
+            <div class="form-group">
+                <label>2. 分类 (Category)</label>
+                <input type="text" id="category" placeholder="例如：美食 / 创意">
+            </div>
 
-        <button class="btn-primary" onclick="generateJSON()">生成 JSON 代码</button>
+            <div class="form-group">
+                <label>3. 选择图片 (Image)</label>
+                <input type="file" id="realFileInput" accept="image/*" style="display:none">
+                
+                <div class="file-select-box" onclick="document.getElementById('realFileInput').click()">
+                    <div style="font-size: 24px; margin-bottom: 8px;">📂</div>
+                    <div style="color: #a0a0a0; font-size: 14px;">点击选择手机/电脑图片</div>
+                    <div id="fileNameShow" style="color: #6366f1; margin-top: 8px; font-weight: bold;"></div>
+                </div>
 
-        <div class="output-area">
-            <button class="copy-output-btn" onclick="copyOutput()">复制</button>
-            <div class="code-block" id="outputCode">// 代码将显示在这里...</div>
+                <input type="text" id="imageUrl" placeholder="images/..." readonly style="margin-top: 10px; color:#666; font-size: 12px;">
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">* 生成后请务必将该图片上传至 GitHub 的 images 文件夹</div>
+            </div>
+
+            <div class="form-group">
+                <label>4. 提示词 (Prompt)</label>
+                <textarea id="prompt" placeholder="在此粘贴你的 AI 提示词..."></textarea>
+            </div>
+
+            <button class="btn-submit" onclick="generateCode()">生成 JSON 代码</button>
+
+            <div class="code-output" id="outputArea" style="display:none;">
+                <div style="margin-bottom: 10px; color: #666; font-size: 12px;">全选复制下面的代码，粘贴到 data.json 的 [ 后面：</div>
+                <div id="jsonResult"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        function setRandomImage() {
-            const id = Math.floor(Math.random() * 1000);
-            document.getElementById('inputImage').value = `https://picsum.photos/800/1000?random=${id}`;
-        }
+        // 1. 监听文件选择，自动填路径
+        document.getElementById('realFileInput').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                let file = e.target.files[0];
+                // 显示给人看的文件名
+                document.getElementById('fileNameShow').innerText = "已选中: " + file.name;
+                // 填入代码用的路径
+                document.getElementById('imageUrl').value = "images/" + file.name;
+            }
+        });
 
-        function generateJSON() {
-            const title = document.getElementById('inputTitle').value;
-            const category = document.getElementById('inputCategory').value;
-            const imageUrl = document.getElementById('inputImage').value;
-            const prompt = document.getElementById('inputPrompt').value;
+        // 2. 生成标准 JSON 代码
+        function generateCode() {
+            // 获取输入值
+            let title = document.getElementById('title').value || "未命名";
+            let category = document.getElementById('category').value || "未分类";
+            let imageUrl = document.getElementById('imageUrl').value;
+            let prompt = document.getElementById('prompt').value || "暂无提示词";
 
-            if(!title || !prompt) {
-                alert("请至少填写标题和提示词！");
-                return;
+            if (!imageUrl) {
+                alert("老梁，别忘了选图！虽然这里能生成代码，但你没图网页会开天窗的。");
+                imageUrl = ""; 
             }
 
-            const data = {
-                id: Date.now().toString(),
+            // 构造对象
+            let newItem = {
+                id: Date.now(), // 自动生成时间戳ID
                 title: title,
                 category: category,
                 imageUrl: imageUrl,
                 prompt: prompt
             };
 
-            const jsonStr = JSON.stringify(data, null, 4);
-            document.getElementById('outputCode').textContent = jsonStr + ","; // 加个逗号方便粘贴
-        }
+            // 【关键】使用 JSON.stringify 自动生成标准美化格式
+            // 4个空格缩进，自动处理换行符
+            let jsonString = JSON.stringify(newItem, null, 4);
 
-        function copyOutput() {
-            const code = document.getElementById('outputCode').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                alert("复制成功！请粘贴到 data.json 文件数组中。");
-            });
+            // 在屁股后面加个逗号，方便粘贴
+            jsonString = "    " + jsonString + ","; 
+
+            // 显示结果
+            document.getElementById('outputArea').style.display = 'block';
+            document.getElementById('jsonResult').innerText = jsonString;
         }
     </script>
 </body>
 </html>
+
