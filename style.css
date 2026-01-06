@@ -430,7 +430,7 @@ body {
         width: 100% !important;
         
         /* 【关键】上40, 右10, 下10, 左10 -> 给文字留出呼吸空间 */
-        padding: 40px 10px 10px 10px !important; 
+        padding: 40px 10px 6px 10px !important; 
         
         background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%) !important;
         border-radius: 0 0 8px 8px !important; /* 跟图片对齐 */
@@ -440,11 +440,12 @@ body {
     /* 6. 标题文字：【关键】加大、加粗 */
     .card-title {
         color: #fff !important;
-        font-size: 13px !important;     /* 【加大】13px，清晰可见 */
-        font-weight: 600 !important;    /* 【加粗】稍微厚重一点，显眼 */
+        font-size: 11px !important;     /* 【加大】13px，清晰可见 */
+        font-weight: 500 !important;    /* 【加粗】稍微厚重一点，显眼 */
         line-height: 1.2 !important;
         margin: 0 !important;
         text-align: left !important;
         text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important; /* 投影加深一点点 */
     }
 }
+
