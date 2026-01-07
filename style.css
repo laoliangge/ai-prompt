@@ -28,13 +28,35 @@ body::before {
     pointer-events: none; z-index: -1;
 }
 
-/* --- 1. 导航栏 (隐形版) --- */
+/* --- 1. 导航栏 (隐形版 + 滚动特效) --- */
 .navbar {
     position: absolute; top: 0; left: 0; width: 100%; height: 60px;
-    background: transparent; /* 完全透明！ */
-    z-index: 1000; border-bottom: none;
-    /* 去掉 backdrop-filter，不再显脏 */
+    
+    /* 初始状态：完全透明 */
+    background: transparent; 
+    z-index: 1000; 
+    border-bottom: none;
+
+    /* ✅ 关键修复：把慢动作加在这里，确保变色过程丝般顺滑 (0.6秒) */
+    transition: background-color 0.6s ease, box-shadow 0.6s ease;
+    backdrop-filter: blur(0px); /* 平时无模糊 */
 }
+
+/* 当页面滚动时触发的状态 */
+.navbar.scrolled {
+    /* ✅ 修复颜色：和胶囊条完全一致的透黑 */
+    background: rgba(5, 5, 5, 0.85) !important;
+    
+    /* ✅ 加上磨砂效果 */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    
+    /* ✅ 加上柔和阴影 */
+    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+
+    /* ❌ 已删除：border-bottom (那个刺眼的白线已移除) */
+}
+
 .nav-content {
     max-width: 1400px; margin: 0 auto; height: 100%;
     display: flex; align-items: center; justify-content: space-between;
@@ -56,18 +78,13 @@ body::before {
     height: 100%; width: 100%;
     overflow-y: auto; 
     -webkit-overflow-scrolling: touch;
-    
-    /* 【核心修改】去掉了 padding-top: 100px */
-    /* 必须去掉这个，吸顶条才能吸在最顶端！ */
     padding: 0; 
 }
 
 /* --- 3. 标题区 (杂志封面风) --- */
 .hero { 
     max-width: 1400px; margin: 0 auto; 
-    text-align: center; /* 居中！ */
-    
-    /* 【核心修改】把留白加在这里 */
+    text-align: center; 
     padding-top: 110px; 
     padding-bottom: 30px;
     padding-left: 20px; padding-right: 20px;
@@ -79,30 +96,33 @@ body::before {
 }
 
 .hero h1 { 
-    /* 英文用衬线，中文用黑体 */
     font-family: "Noto Sans SC", sans-serif; 
     font-size: 3.5rem; 
-    font-weight: 700; /* 加粗 */
-    font-style: normal; /* 【改】去掉了斜体 */
+    font-weight: 700; 
+    font-style: normal; 
     line-height: 1.1;
     color: #ffffff; 
     text-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
 
-/* --- 4. 吸顶分类条 (新增) --- */
+/* --- 4. 吸顶分类条 --- */
 .sticky-category-bar {
     position: -webkit-sticky;
     position: sticky;
-    top: 60px;               /* 最终定死：60px，严丝合缝 */
+    
+    /* ✅ 最终定死：60px，严丝合缝 */
+    top: 60px;               
     z-index: 900;
 
-    padding: 5px 0;          /* 精致细条 */
+    padding: 5px 0;          
     margin-bottom: 20px;
 
-    /* 统一的磨砂玻璃质感 */
+    /* ✅ 统一质感：和顶栏滚动后一模一样 */
     background: rgba(5, 5, 5, 0.85); 
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
+    
+    /* 这里的下边框保留，作为和内容的分割，很淡 */
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -124,7 +144,7 @@ body::before {
 #columns-container { 
     max-width: 1400px; margin: 0 auto; 
     display: flex; gap: 10px; align-items: flex-start; 
-    padding: 0 10px; /* 给左右留点缝 */
+    padding: 0 10px; 
 }
 .gallery-column { flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .loading-text { width: 100%; text-align: center; color: #333; margin-top: 40px; font-family: monospace; }
@@ -135,8 +155,8 @@ body::before {
 
 /* 手机端适配 */
 @media (max-width: 768px) {
-    .hero { padding-top: 90px; } /* 手机上留白小一点 */
-    .hero h1 { font-size: 2.2rem; } /* 36px 左右 */
+    .hero { padding-top: 90px; } 
+    .hero h1 { font-size: 2.2rem; } 
     
     #columns-container { gap: 6px; padding: 0 6px; }
     .gallery-column { gap: 6px; }
@@ -160,7 +180,7 @@ body::before {
     .card-desc { font-size: 12px; color: #666; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 }
 
-/* --- 7. 弹窗 (保持完美版) --- */
+/* --- 7. 弹窗 --- */
 .modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100dvh;
     background: rgba(0,0,0,0.92); backdrop-filter: blur(10px);
@@ -169,7 +189,7 @@ body::before {
 .modal.show { opacity: 1; }
 
 .modal-content {
-    width: 90%; max-width: 1000px; height: 80vh; /* 稍微缩小一点，更精致 */
+    width: 90%; max-width: 1000px; height: 80vh; 
     background: #0a0a0a; border: 1px solid #222; display: flex; position: relative;
     box-shadow: 0 0 50px rgba(0,0,0,0.8); overflow: hidden; border-radius: 12px;
 }
@@ -213,21 +233,3 @@ body::before {
     #modalTitle { font-size: 1.5rem; }
     .close-btn-invisible { top: 10px; right: 10px; background: rgba(0,0,0,0.5); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 }
-
-/* --- 放在 style.css 最后面 --- */
-/* --- 导航栏：豪华渐变版 --- */
-/* --- 顶栏滚动特效 (最终版) --- */
-.navbar {
-    background: transparent; /* 初始：全透明 */
-    transition: all 0.6s ease; /* 慢动作过渡 */
-    backdrop-filter: blur(0px);
-}
-
-.navbar.scrolled {
-    background: rgba(5, 5, 5, 0.85) !important; /* 滚动后：透黑 */
-    backdrop-filter: blur(15px); /* 加磨砂 */
-    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-    
