@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* --- 最终修复版：金线必现 --- */
+        /* --- 最终定稿：紧凑黑金 + 点击闪光 --- */
         body { 
             overflow-y: auto !important; 
             height: auto !important; 
@@ -45,7 +45,7 @@
             margin-left: 2px;
         }
 
-        /* 输入框样式 */
+        /* 输入框：金线必现 */
         input, textarea, .file-box { 
             width: 100%; 
             background: #151515; 
@@ -56,19 +56,14 @@
             font-family: 'Inter', sans-serif; 
             font-size: 13px; 
             box-sizing: border-box;
-            transition: all 0.2s ease-in-out; /* 动画加快，反应更灵敏 */
-            
-            /* 关键：去掉系统默认的高亮颜色 */
+            transition: all 0.2s ease-in-out; 
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* 【核心修复】聚焦时：金线 + 金色光晕 */
         input:focus, textarea:focus { 
             outline: none; 
-            /* 强制变金 */
             border-color: #d4af37 !important; 
             background: #1a1a1a;
-            /* 加一层淡淡的金光，确保能看见 */
             box-shadow: 0 0 0 1px #d4af37, 0 0 8px rgba(212, 175, 55, 0.2);
         }
         
@@ -78,7 +73,6 @@
             line-height: 1.4;
         }
 
-        /* 图片选择框 */
         .file-box {
             display: flex;
             align-items: center;
@@ -87,7 +81,6 @@
             color: #666;
             padding: 8px 12px; 
         }
-        /* 图片框激活状态也加金线 */
         .file-box.active {
             border-color: #d4af37 !important;
             color: #d4af37;
@@ -102,7 +95,7 @@
             border: 1px solid #444;
         }
 
-        /* 按钮：70%宽 + 玻璃质感 */
+        /* 玻璃按钮 */
         .btn-glass { 
             width: 70%; 
             margin: 5px auto 0; 
@@ -121,8 +114,21 @@
             cursor: pointer; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             letter-spacing: 1px;
+            
+            /* 关键：给颜色变化加个过渡，让灭掉的过程稍微柔和一点 */
+            transition: all 0.3s ease-out;
         }
-        .btn-glass:active { transform: scale(0.98); background: rgba(255,255,255,0.15); }
+        
+        /* 【核心新增】高光瞬闪效果类 */
+        .btn-glass.flash-gold {
+            /* 耀眼的流光金背景 */
+            background: linear-gradient(135deg, #d4af37, #ffd700) !important;
+            /* 强烈的发光光晕 */
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8), 0 0 10px #fff !important;
+            border-color: #fff !important;
+            color: #000 !important; /* 黑字对比度最高 */
+            transform: scale(0.98); /* 稍微按下去一点 */
+        }
 
         /* 结果框 */
         .result-container {
@@ -203,7 +209,7 @@
                 <textarea id="prompt" placeholder="在此粘贴 Prompt..."></textarea>
             </div>
 
-            <button class="btn-glass" onclick="gen()">生成 JSON 代码</button>
+            <button class="btn-glass" id="genBtn" onclick="gen()">生成 JSON 代码</button>
 
             <div class="result-container">
                 <button class="copy-tag" id="btnCopy" onclick="copyC()">复制</button>
@@ -216,15 +222,23 @@
         document.getElementById('fileIn').onchange = function(e) {
             if(e.target.files[0]) {
                 const name = e.target.files[0].name;
-                const zone = document.getElementById('dropZone');
                 document.getElementById('fileName').innerText = name;
-                // 让图片框也变金
-                zone.classList.add('active');
+                document.getElementById('dropZone').classList.add('active');
                 document.getElementById('imgVal').value = "images/" + name;
             }
         };
 
         function gen() {
+            // 1. 触发金光闪烁特效
+            const btn = document.getElementById('genBtn');
+            btn.classList.add('flash-gold');
+            
+            // 2. 300毫秒后自动灭掉 (模拟闪光结束)
+            setTimeout(() => {
+                btn.classList.remove('flash-gold');
+            }, 300);
+
+            // 3. 生成数据逻辑
             let title = document.getElementById('title').value || "未命名";
             let category = document.getElementById('category').value || "默认";
             let imageUrl = document.getElementById('imgVal').value || "images/placeholder.jpg"; 
