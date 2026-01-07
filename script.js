@@ -153,13 +153,21 @@ window.addEventListener('resize', () => {
     resizeTimer = setTimeout(initGallery, 300);
 });
 
-/* --- 放在 script.js 最后面 --- */
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 10) {
-        navbar.classList.add('scrolled'); // 滚了：加黑名单
+/* --- 修正版 JS：放在 script.js 最后面 --- */
+
+// 1. 找到那个真正负责滚动的容器 (就是 main 标签)
+const scrollContainer = document.getElementById('gallery-wrapper');
+// 2. 找到导航栏
+const navbar = document.querySelector('.navbar');
+
+// 3. 监听容器的滚动 (注意：这里不再是 window 了)
+scrollContainer.addEventListener('scroll', () => {
+    // 检查容器滚了多少距离 (scrollTop)
+    if (scrollContainer.scrollTop > 10) {
+        navbar.classList.add('scrolled'); // 滚了：变黑
     } else {
-        navbar.classList.remove('scrolled'); // 没滚：变回清白
+        navbar.classList.remove('scrolled'); // 回顶：变透明
     }
 });
+
 
