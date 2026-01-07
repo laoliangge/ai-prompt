@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>发布工具 | AI PROMPT</title>
+    <title>发布工具 | Admin</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,157 +12,137 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* --- 发布页专用精修样式 --- */
+        /* --- 覆盖样式：回归“老版”的扎实感 --- */
         body { 
             overflow-y: auto !important; 
             height: auto !important; 
-            padding-bottom: 80px;
+            padding-bottom: 50px;
             background: #050505; 
         }
 
         .admin-wrapper { 
-            max-width: 500px; /* 宽度收窄，显得精致 */
+            max-width: 500px; 
             margin: 0 auto; 
-            padding: 100px 20px 40px; 
+            padding: 90px 20px 40px; 
         }
 
-        /* 标题：大幅缩小，不再是巨无霸 */
+        /* 标题：保持新版字体，但位置居中，大小适中 */
         .page-title { 
             font-family: 'Playfair Display', serif; 
-            font-size: 1.8rem; /* 从 2.5rem 降下来 */
+            font-size: 2rem; 
             color: #fff; 
-            margin-bottom: 5px; 
+            margin-bottom: 30px; 
             text-align: center; 
-            letter-spacing: 0.5px;
-        }
-        .page-subtitle {
-            text-align: center;
-            color: #555;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 50px; /* 增加留白 */
         }
 
-        /* 表单区域：去框化，只留线条 */
-        .form-group { 
-            margin-bottom: 35px; 
-            position: relative;
+        /* 表单容器：不用磨砂了，直接干净的布局 */
+        .form-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
         }
-        
+
+        /* 输入框标签 */
         label { 
             display: block; 
-            color: #666; 
-            font-size: 0.65rem; 
-            letter-spacing: 1.5px; 
-            text-transform: uppercase; 
+            color: #888; 
+            font-size: 13px; 
             margin-bottom: 8px; 
-            font-weight: 600; 
+            font-weight: 500;
         }
 
-        /* 输入框：极简底边线风格 (像填支票一样高级) */
-        input, textarea { 
+        /* 【核心改动】回归老版：实实在在的黑盒子输入框 */
+        input, textarea, .upload-btn { 
             width: 100%; 
-            background: transparent; 
-            border: none; 
-            border-bottom: 1px solid #333; /* 只有底边线 */
+            background: #111; /* 深色背景盒子 */
+            border: 1px solid #333; /* 明显的边框 */
             color: #fff; 
-            padding: 8px 0; 
-            border-radius: 0; 
+            padding: 14px; 
+            border-radius: 8px; /* 圆角矩形 */
             font-family: 'Inter', sans-serif; 
-            font-size: 15px; 
-            transition: all 0.3s ease; 
+            font-size: 14px; 
+            box-sizing: border-box;
+            transition: border-color 0.3s;
         }
         
-        /* 聚焦时，底边线变亮白 */
+        /* 聚焦变亮，有安全感 */
         input:focus, textarea:focus { 
             outline: none; 
-            border-bottom-color: #fff; 
-            background: transparent;
+            border-color: #d4af37; /* 金色边框 */
+            background: #151515;
         }
         
         textarea { 
             resize: vertical; 
-            min-height: 80px; 
-            line-height: 1.6; 
+            min-height: 120px; 
+            line-height: 1.5;
         }
 
-        /* 图片选择：极简线框 */
-        .upload-area { 
-            border: 1px dashed #333; 
-            border-radius: 4px; 
-            padding: 20px; 
-            text-align: center; 
-            cursor: pointer; 
-            color: #555; 
-            font-size: 12px; 
-            transition: 0.3s;
+        /* 图片上传按钮化 */
+        .upload-btn {
+            text-align: center;
+            cursor: pointer;
+            color: #666;
+            border: 1px dashed #444;
         }
-        .upload-area:hover { border-color: #666; color: #888; }
-        .upload-area.active { border-color: #d4af37; color: #d4af37; border-style: solid; }
+        .upload-btn:hover { border-color: #888; color: #fff; }
+        .upload-btn.active { border-color: #d4af37; color: #d4af37; border-style: solid; }
 
-        /* 生成按钮：纯白胶囊，黑字，最经典的时尚反差 */
+        /* 【核心改动】回归老版：大大的实心按钮 */
         .btn-generate { 
             width: 100%; 
             padding: 16px; 
-            background: #fff; /* 白底 */
-            color: #000; /* 黑字 */
+            background: #fff; /* 不用紫色，用高级白 */
+            color: #000; 
             border: none; 
-            border-radius: 50px; /* 胶囊形 */
+            border-radius: 8px; 
             font-weight: 700; 
-            font-size: 0.85rem; 
-            letter-spacing: 1px;
+            font-size: 16px; 
             cursor: pointer; 
-            margin-top: 20px;
-            text-transform: uppercase;
-            box-shadow: 0 5px 20px rgba(255,255,255,0.05);
-            transition: transform 0.2s, background 0.2s; 
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.1);
         }
-        .btn-generate:hover { background: #d4af37; /* 悬停变金 */ }
         .btn-generate:active { transform: scale(0.98); }
 
-        /* 结果框：隐形黑盒，出来时不突兀 */
+        /* 【核心改动】回归老版：结果黑盒子 */
         .result-box { 
-            display: none; 
-            margin-top: 40px; 
-            background: #0a0a0a; 
-            border: 1px solid #222; 
-            border-radius: 6px; 
-            overflow: hidden; 
-        }
-
-        .result-header { 
-            background: #111; 
-            padding: 8px 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid #1a1a1a;
+            display: none; /* 默认隐藏 */
+            margin-top: 20px; 
+            background: #000; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            padding: 0;
+            position: relative;
         }
         
-        .result-label { color: #444; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
-
-        .btn-copy { 
-            background: transparent; border: none; 
-            color: #d4af37; font-size: 10px; font-weight: 700; cursor: pointer; letter-spacing: 1px;
-        }
-        
-        /* 代码显示区 */
+        /* 绿色的代码文字，还原老版的感觉 */
         .code-content { 
-            padding: 15px; 
-            color: #a5f3fc; 
-            font-family: monospace; font-size: 11px; line-height: 1.5; 
-            white-space: pre-wrap; word-break: break-all; 
-            max-height: 200px; overflow-y: auto; 
+            padding: 20px; 
+            color: #4ade80; /* 经典的终端绿 */
+            font-family: monospace; 
+            font-size: 12px; 
+            line-height: 1.6; 
+            white-space: pre-wrap; 
+            word-break: break-all; 
+            max-height: 200px; 
+            overflow-y: auto; 
         }
-        
-        /* 滚动条 */
-        .code-content::-webkit-scrollbar { width: 4px; }
-        .code-content::-webkit-scrollbar-track { background: #0a0a0a; }
-        .code-content::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+        /* 复制按钮悬浮在右上角 */
+        .btn-copy { 
+            position: absolute;
+            top: 10px; right: 10px;
+            background: #222; 
+            border: 1px solid #444; 
+            color: #fff; 
+            padding: 5px 12px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            cursor: pointer; 
+        }
 
         @media (max-width: 768px) {
-            .admin-wrapper { padding-top: 90px; }
+            .admin-wrapper { padding-top: 80px; }
         }
     </style>
 </head>
@@ -181,42 +161,38 @@
     </nav>
 
     <div class="admin-wrapper">
-        <h1 class="page-title">Create Entry</h1>
-        <p class="page-subtitle">Add to Collection</p>
+        <h1 class="page-title">New Entry</h1>
         
         <div class="form-container">
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" id="title" placeholder="Enter title...">
+            <div>
+                <label>标题 Title</label>
+                <input type="text" id="title" placeholder="例如：机械姬">
             </div>
 
-            <div class="form-group">
-                <label>Category</label>
-                <input type="text" id="category" placeholder="Portrait / Landscape...">
+            <div>
+                <label>分类 Category</label>
+                <input type="text" id="category" placeholder="例如：科幻 / 3D">
             </div>
             
-            <div class="form-group">
-                <label>Image Source</label>
+            <div>
+                <label>图片 Image</label>
                 <input type="file" id="fileIn" hidden accept="image/*">
-                <div class="upload-area" onclick="document.getElementById('fileIn').click()" id="dropZone">
-                    TAP TO SELECT IMAGE
+                <div class="upload-btn" onclick="document.getElementById('fileIn').click()" id="dropZone">
+                    + 点击选择图片
                 </div>
                 <input type="hidden" id="imgVal">
             </div>
 
-            <div class="form-group">
-                <label>Prompt Details</label>
-                <textarea id="prompt" placeholder="Paste your AI prompt here..."></textarea>
+            <div>
+                <label>提示词 Prompt</label>
+                <textarea id="prompt" placeholder="在此粘贴 JSON 内容或提示词..."></textarea>
             </div>
 
-            <button class="btn-generate" onclick="gen()">Generate Code</button>
+            <button class="btn-generate" onclick="gen()">生成 JSON 代码</button>
 
             <div class="result-box" id="resBox">
-                <div class="result-header">
-                    <span class="result-label">JSON DATA</span>
-                    <button class="btn-copy" id="btnCopy" onclick="copyC()">COPY</button>
-                </div>
-                <div class="code-content" id="codeShow"></div>
+                <button class="btn-copy" id="btnCopy" onclick="copyC()">复制</button>
+                <div class="code-content" id="codeShow">// 代码将显示在这里...</div>
             </div>
         </div>
     </div>
@@ -226,7 +202,7 @@
         document.getElementById('fileIn').onchange = function(e) {
             if(e.target.files[0]) {
                 const name = e.target.files[0].name;
-                document.getElementById('dropZone').innerText = "SELECTED: " + name;
+                document.getElementById('dropZone').innerText = "✅ 已选: " + name;
                 document.getElementById('dropZone').classList.add('active');
                 document.getElementById('imgVal').value = "images/" + name;
             }
@@ -234,8 +210,8 @@
 
         // 生成逻辑
         function gen() {
-            let title = document.getElementById('title').value || "Untitled";
-            let category = document.getElementById('category').value || "Uncategorized";
+            let title = document.getElementById('title').value || "未命名";
+            let category = document.getElementById('category').value || "默认";
             let imageUrl = document.getElementById('imgVal').value || "images/placeholder.jpg"; 
             let prompt = document.getElementById('prompt').value || "";
 
@@ -251,7 +227,7 @@
             document.getElementById('codeShow').innerText = "    " + s + ",";
             document.getElementById('resBox').style.display = 'block';
             
-            // 稍微往下滚一点
+            // 滚动查看
             setTimeout(() => {
                 document.getElementById('resBox').scrollIntoView({behavior: "smooth", block: "nearest"});
             }, 100);
@@ -262,8 +238,14 @@
             const text = document.getElementById('codeShow').innerText;
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.getElementById('btnCopy');
-                btn.innerText = "COPIED";
-                setTimeout(() => { btn.innerText = "COPY"; }, 2000);
+                btn.innerText = "已复制";
+                btn.style.borderColor = "#4ade80";
+                btn.style.color = "#4ade80";
+                setTimeout(() => { 
+                    btn.innerText = "复制"; 
+                    btn.style.borderColor = "#444";
+                    btn.style.color = "#fff";
+                }, 2000);
             });
         }
     </script>
