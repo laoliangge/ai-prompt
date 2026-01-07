@@ -7,7 +7,7 @@
     --accent: #d4af37; /* 香槟金 */
 }
 
-/* 高端细节：选中文字变成金底黑字 */
+/* 选中文字变金底黑字 */
 ::selection {
     background: var(--accent);
     color: #000;
@@ -15,7 +15,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-/* 🔒 锁死浏览器，防抖动 */
+/* 🔒 锁死浏览器，防地址栏伸缩 */
 html, body {
     background-color: var(--bg-deep);
     color: var(--text-white);
@@ -57,6 +57,7 @@ body::before {
     height: 100%; width: 100%;
     overflow-y: auto; 
     -webkit-overflow-scrolling: touch;
+    /* 顶部留白，防止标题被导航栏挡住 */
     padding-top: 100px; 
     padding-left: 10px; padding-right: 10px;
 }
@@ -65,23 +66,22 @@ body::before {
 #gallery-wrapper::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 #gallery-wrapper::-webkit-scrollbar-track { background: transparent; }
 
-/* --- 3. 标题区 --- */
-.hero { max-width: 1400px; margin: 0 auto 40px; padding: 0 14px; text-align: left; }
-.hero-subtitle { font-size: 0.75rem; letter-spacing: 3px; color: var(--accent); margin-bottom: 10px; font-weight: 600; }
-.hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.5rem;
-    font-weight: 400;
-    font-style: italic;
+/* --- 3. 标题区 (已修正：纯白不闪烁) --- */
+.hero { max-width: 1400px; margin: 0 auto 30px; padding: 0 14px; text-align: left; }
+
+.hero-subtitle { 
+    font-size: 0.75rem; letter-spacing: 3px; color: var(--accent); 
+    margin-bottom: 10px; font-weight: 600; 
+}
+
+.hero h1 { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 3.5rem; 
+    font-weight: 400; 
+    font-style: italic; 
     line-height: 1.1;
-    
-    /* 核心修改：纯白实心字，不再闪烁 */
-    color: #ffffff;
-    
-    /* 核心修改：加重阴影，防止和背景图“打架”看不清 */
-    text-shadow: 0 5px 20px rgba(0,0,0,0.9);
-    
-    margin-bottom: 20px;
+    color: #ffffff; /* 纯白 */
+    text-shadow: 0 5px 20px rgba(0,0,0,0.9); /* 阴影防背景打架 */
 }
 
 /* --- 4. 瀑布流 --- */
@@ -170,4 +170,3 @@ body::before {
         margin-left: -25px; margin-right: -25px; padding-left: 25px; padding-right: 25px; border-top: 1px solid #222;
     }
 }
-
