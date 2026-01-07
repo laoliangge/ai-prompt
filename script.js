@@ -152,3 +152,14 @@ window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(initGallery, 300);
 });
+
+/* --- 放在 script.js 最后面 --- */
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 10) {
+        navbar.classList.add('scrolled'); // 滚了：加黑名单
+    } else {
+        navbar.classList.remove('scrolled'); // 没滚：变回清白
+    }
+});
+
