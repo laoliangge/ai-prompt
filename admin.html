@@ -12,68 +12,70 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* --- 最终版：黑金实干风 + 玻璃按钮 --- */
+        /* --- 最终修复版：金线必现 --- */
         body { 
             overflow-y: auto !important; 
             height: auto !important; 
-            padding-bottom: 60px;
+            padding-bottom: 40px;
             background: #050505; 
         }
 
         .admin-wrapper { 
             max-width: 500px; 
             margin: 0 auto; 
-            /* 顶部留白正好避开导航栏，没有标题占位 */
-            padding: 85px 20px 40px; 
+            padding: 85px 15px 20px; 
         }
 
-        /* 表单容器 */
         .form-container { 
             display: flex; 
             flex-direction: column; 
-            gap: 18px; 
+            gap: 10px; 
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px; 
         }
 
         label { 
-            color: #888; 
-            font-size: 12px; 
+            color: #666; 
+            font-size: 11px; 
             font-weight: 500;
             margin-left: 2px;
-            letter-spacing: 0.5px;
         }
 
-        /* 实实在在的黑盒子输入框 (老版手感) */
+        /* 输入框样式 */
         input, textarea, .file-box { 
             width: 100%; 
-            background: #151515; /* 深沉黑灰 */
-            border: 1px solid #333; /* 扎实的边框 */
+            background: #151515; 
+            border: 1px solid #333; 
             color: #fff; 
-            padding: 14px; 
-            border-radius: 8px; 
+            padding: 10px 12px; 
+            border-radius: 6px; 
             font-family: 'Inter', sans-serif; 
-            font-size: 14px; 
+            font-size: 13px; 
             box-sizing: border-box;
-            transition: all 0.3s;
+            transition: all 0.2s ease-in-out; /* 动画加快，反应更灵敏 */
+            
+            /* 关键：去掉系统默认的高亮颜色 */
+            -webkit-tap-highlight-color: transparent;
         }
         
-        /* 聚焦时，边框微微泛亮 */
+        /* 【核心修复】聚焦时：金线 + 金色光晕 */
         input:focus, textarea:focus { 
             outline: none; 
-            border-color: #666; 
+            /* 强制变金 */
+            border-color: #d4af37 !important; 
             background: #1a1a1a;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.05);
+            /* 加一层淡淡的金光，确保能看见 */
+            box-shadow: 0 0 0 1px #d4af37, 0 0 8px rgba(212, 175, 55, 0.2);
         }
         
         textarea { 
-            min-height: 100px; 
+            min-height: 80px; 
             resize: vertical; 
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         /* 图片选择框 */
@@ -83,92 +85,80 @@
             justify-content: space-between;
             cursor: pointer;
             color: #666;
+            padding: 8px 12px; 
         }
+        /* 图片框激活状态也加金线 */
+        .file-box.active {
+            border-color: #d4af37 !important;
+            color: #d4af37;
+        }
+
         .file-btn {
             background: #2a2a2a;
             color: #ccc;
-            padding: 4px 12px;
+            padding: 2px 8px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             border: 1px solid #444;
         }
 
-        /* 【核心升级】玻璃材质高级按钮 */
+        /* 按钮：70%宽 + 玻璃质感 */
         .btn-glass { 
-            width: 100%; 
-            padding: 16px; 
-            margin-top: 10px;
-            
-            /* 玻璃拟态核心代码 */
+            width: 70%; 
+            margin: 5px auto 0; 
+            display: block;
+            padding: 12px; 
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(20px); /* 磨砂模糊 */
-            -webkit-backdrop-filter: blur(20px);
-            
-            /* 边框高光：上和左亮，下和右暗，模拟光照立体感 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
-            border-left: 1px solid rgba(255, 255, 255, 0.4);
-            
-            border-radius: 8px; 
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px; 
             color: #fff; 
-            font-weight: 700; 
-            font-size: 16px; 
+            font-weight: 600; 
+            font-size: 14px; 
             cursor: pointer; 
-            
-            /* 投影增加悬浮感 */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             letter-spacing: 1px;
         }
-        
-        /* 悬停/点击效果：泛金光 */
-        .btn-glass:hover, .btn-glass:active { 
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
-            border-color: rgba(212, 175, 55, 0.5);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-            transform: translateY(-1px);
-        }
-        .btn-glass:active { transform: translateY(1px); }
+        .btn-glass:active { transform: scale(0.98); background: rgba(255,255,255,0.15); }
 
-        /* 结果框 (常驻黑盒，老版逻辑) */
+        /* 结果框 */
         .result-container {
-            margin-top: 25px;
+            margin-top: 15px; 
             position: relative;
         }
         
         .code-box {
             background: #000;
             border: 1px solid #222;
-            border-radius: 8px;
-            padding: 20px;
-            min-height: 120px; 
-            color: #4ade80; /* 经典终端绿 */
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 100px; 
+            color: #4ade80; 
             font-family: monospace;
-            font-size: 12px;
-            line-height: 1.5;
+            font-size: 11px;
+            line-height: 1.4;
             white-space: pre-wrap;
             word-break: break-all;
             overflow-y: auto;
-            max-height: 250px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8); /* 内阴影，更有深邃感 */
+            max-height: 200px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8); 
         }
 
         .copy-tag {
             position: absolute;
-            top: 10px; right: 10px;
+            top: 8px; right: 8px;
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
             color: #aaa;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 10px;
             cursor: pointer;
             z-index: 10;
-            transition: 0.2s;
         }
-        .copy-tag:hover { background: rgba(255,255,255,0.2); color: #fff; }
 
     </style>
 </head>
@@ -201,7 +191,7 @@
             <div class="input-group">
                 <label>图片链接</label>
                 <input type="file" id="fileIn" hidden accept="image/*">
-                <div class="file-box" onclick="document.getElementById('fileIn').click()">
+                <div class="file-box" id="dropZone" onclick="document.getElementById('fileIn').click()">
                     <span id="fileName">点击选择图片...</span>
                     <span class="file-btn">浏览</span>
                 </div>
@@ -226,8 +216,10 @@
         document.getElementById('fileIn').onchange = function(e) {
             if(e.target.files[0]) {
                 const name = e.target.files[0].name;
+                const zone = document.getElementById('dropZone');
                 document.getElementById('fileName').innerText = name;
-                document.getElementById('fileName').style.color = "#d4af37";
+                // 让图片框也变金
+                zone.classList.add('active');
                 document.getElementById('imgVal').value = "images/" + name;
             }
         };
@@ -248,7 +240,10 @@
             
             let s = JSON.stringify(d, null, 4);
             document.getElementById('codeShow').innerText = "    " + s + ",";
-            document.getElementById('codeShow').scrollIntoView({behavior: "smooth"});
+            
+            setTimeout(() => {
+                document.getElementById('codeShow').scrollIntoView({behavior: "smooth", block: "center"});
+            }, 300);
         }
 
         function copyC() {
