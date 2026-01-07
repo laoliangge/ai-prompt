@@ -28,33 +28,23 @@ body::before {
     pointer-events: none; z-index: -1;
 }
 
-/* --- 1. 导航栏 (隐形版 + 滚动特效) --- */
+/* --- 1. 导航栏 (平时透明，滚动后变色) --- */
 .navbar {
     position: absolute; top: 0; left: 0; width: 100%; height: 60px;
-    
-    /* 初始状态：完全透明 */
     background: transparent; 
     z-index: 1000; 
     border-bottom: none;
-
-    /* ✅ 关键修复：把慢动作加在这里，确保变色过程丝般顺滑 (0.6秒) */
-    transition: background-color 0.6s ease, box-shadow 0.6s ease;
-    backdrop-filter: blur(0px); /* 平时无模糊 */
+    /* ✅ 确保变色顺滑，无白线 */
+    transition: background-color 0.6s ease;
 }
 
-/* 当页面滚动时触发的状态 */
+/* 滚动状态：和胶囊栏完全合体 */
 .navbar.scrolled {
-    /* ✅ 修复颜色：和胶囊条完全一致的透黑 */
     background: rgba(5, 5, 5, 0.85) !important;
-    
-    /* ✅ 加上磨砂效果 */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    
-    /* ✅ 加上柔和阴影 */
-    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
-
-    /* ❌ 已删除：border-bottom (那个刺眼的白线已移除) */
+    box-shadow: none; /* 删掉阴影，解决深浅不一 */
+    border-bottom: none; /* 删掉电灯泡白线 */
 }
 
 .nav-content {
@@ -109,20 +99,15 @@ body::before {
 .sticky-category-bar {
     position: -webkit-sticky;
     position: sticky;
-    
-    /* ✅ 最终定死：60px，严丝合缝 */
-    top: 60px;               
+    top: 60px;               /* 严丝合缝对齐导航栏高度 */
     z-index: 900;
-
     padding: 5px 0;          
     margin-bottom: 20px;
 
-    /* ✅ 统一质感：和顶栏滚动后一模一样 */
+    /* ✅ 核心修正：背景透明度必须和顶栏完全一致 */
     background: rgba(5, 5, 5, 0.85); 
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    
-    /* 这里的下边框保留，作为和内容的分割，很淡 */
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -147,7 +132,6 @@ body::before {
     padding: 0 10px; 
 }
 .gallery-column { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-.loading-text { width: 100%; text-align: center; color: #333; margin-top: 40px; font-family: monospace; }
 
 /* --- 6. 卡片样式 --- */
 .card { position: relative; border-radius: 8px; background: var(--bg-card); cursor: pointer; overflow: hidden; transition: transform 0.3s ease; }
@@ -157,79 +141,39 @@ body::before {
 @media (max-width: 768px) {
     .hero { padding-top: 90px; } 
     .hero h1 { font-size: 2.2rem; } 
-    
     #columns-container { gap: 6px; padding: 0 6px; }
     .gallery-column { gap: 6px; }
-    
     .card-info {
         position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 8px 10px;
         background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
         pointer-events: none;
     }
     .card-title { color: #fff; font-size: 12px; font-weight: 500; line-height: 1.3; }
-    .card-category, .card-desc { display: none; }
 }
 
 /* 电脑端适配 */
 @media (min-width: 769px) {
     .card:hover { transform: translateY(-5px); z-index: 10; }
-    .card:hover img { opacity: 1; }
     .card-info { padding: 15px; }
-    .card-category { font-size: 10px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 5px; }
-    .card-title { font-size: 15px; font-family: 'Playfair Display', serif; margin-bottom: 5px; color: #fff; }
+    .card-category { font-size: 10px; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 5px; }
+    .card-title { font-size: 15px; font-family: 'Playfair Display', serif; color: #fff; }
     .card-desc { font-size: 12px; color: #666; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 }
 
 /* --- 7. 弹窗 --- */
 .modal {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100dvh;
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100dvh;
     background: rgba(0,0,0,0.92); backdrop-filter: blur(10px);
     z-index: 2000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s;
 }
 .modal.show { opacity: 1; }
-
 .modal-content {
     width: 90%; max-width: 1000px; height: 80vh; 
     background: #0a0a0a; border: 1px solid #222; display: flex; position: relative;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8); overflow: hidden; border-radius: 12px;
+    border-radius: 12px; overflow: hidden;
 }
-
-.close-btn-invisible {
-    position: absolute; top: 15px; right: 15px; z-index: 50;
-    background: transparent; border: none; color: #fff; font-size: 24px; cursor: pointer;
-}
-
 .modal-layout { display: flex; width: 100%; height: 100%; }
-
-.modal-img-box { 
-    flex: 1.2; background: #000; display: flex; align-items: center; justify-content: center; padding: 0; 
-}
+.modal-img-box { flex: 1.2; background: #000; display: flex; align-items: center; }
 #modalImage { width: 100%; height: 100%; object-fit: contain; }
-
-.modal-info-box { 
-    flex: 1; padding: 30px; display: flex; flex-direction: column; border-left: 1px solid #222; min-width: 0; 
-}
-
-.modal-tag { color: var(--accent); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block; font-weight: 700; }
-#modalTitle { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 20px; line-height: 1.2; color: #fff; }
-
-.prompt-container { 
-    background: #111; padding: 15px; border-radius: 6px; border: 1px solid #222; 
-    flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 20px; 
-}
-.prompt-tools { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 10px; color: #666; font-weight: 700; letter-spacing: 1px; }
-.prompt-text { color: #aaa; font-family: monospace; font-size: 12px; line-height: 1.6; overflow-y: auto; white-space: pre-wrap; }
-.btn-copy { background: transparent; border: 1px solid #333; color: #888; padding: 4px 12px; cursor: pointer; font-size: 10px; border-radius: 4px; }
-.btn-copy:hover { border-color: #fff; color: #fff; }
-
-.modal-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid #1a1a1a; }
-.btn-pill-back { background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 50px; font-size: 12px; cursor: pointer; }
-.modal-id { font-family: monospace; color: #444; font-size: 10px; }
-
-@media (max-width: 768px) {
-    .modal-content { flex-direction: column; height: 100%; width: 100%; border-radius: 0; border: none; }
-    .modal-img-box { flex: 0 0 45%; }
-    .modal-info-box { padding: 20px; border: none; }
-    #modalTitle { font-size: 1.5rem; }
-    .close-btn-invisible { top: 10px; right: 10px; background: rgba(0,0,0,0.5); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-}
+.modal-info-box { flex: 1; padding: 30px; display: flex; flex-direction: column; border-left: 1px solid #222; }
+/* ... [此处保持你原来的弹窗文字样式] ... */
