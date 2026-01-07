@@ -10,25 +10,20 @@ document.addEventListener('DOMContentLoaded', () => {
             allData = data; 
             initGallery(); // 渲染画廊
             
-            // 电脑端开启自动滚屏
-            if (window.innerWidth > 768) {
-                startAutoScroll();
-                setupInteraction();
-            }
+            // 【改动1】删掉了判断屏幕宽度的代码
+            // 现在不管手机还是电脑，直接启动自动滚动！
+            startAutoScroll();
+            setupInteraction();
         })
         .catch(err => console.error('Error:', err));
 });
 
 function initGallery() {
-    // 🔴 核心修正点在这里！
-    // 之前写成了 gallery-wrapper，导致标题被删。
-    // 现在改成 columns-container，只操作图片区，标题就安全了！
+    // 必须是 columns-container，只操作图片区，标题才安全
     const container = document.getElementById('columns-container');
-    
-    // 防错：万一 HTML 里没写对 ID，就不执行，防止报错
     if (!container) return; 
 
-    container.innerHTML = ''; // 清空旧图片（不会碰标题了）
+    container.innerHTML = ''; 
     
     // 手机2列，电脑4列
     const colCount = window.innerWidth <= 768 ? 2 : 4;
@@ -48,13 +43,13 @@ function initGallery() {
         card.onclick = () => openModal(item);
 
         if (window.innerWidth <= 768) {
-            // 手机版
+            // 手机版结构
             card.innerHTML = `
                 <img src="${item.imageUrl}" loading="lazy" alt="${item.title}">
                 <div class="card-info"><div class="card-title">${item.title}</div></div>
             `;
         } else {
-            // 电脑版
+            // 电脑版结构
             card.innerHTML = `
                 <img src="${item.imageUrl}" loading="lazy" alt="${item.title}">
                 <div class="card-info">
@@ -68,13 +63,15 @@ function initGallery() {
     });
 }
 
-// 自动滚屏
+// 自动滚屏逻辑
 function startAutoScroll() {
     const scroller = document.getElementById('gallery-wrapper');
-    const speed = 0.5;
+    const speed = 0.5; // 滚动速度，嫌快就改小点（比如 0.3）
 
     function step() {
+        // 只有没暂停的时候才滚
         if (!isPaused) {
+            // 如果还没滚到底，就继续滚
             if ((scroller.scrollTop + scroller.clientHeight) < scroller.scrollHeight) {
                 scroller.scrollBy(0, speed);
             }
@@ -84,19 +81,32 @@ function startAutoScroll() {
     step();
 }
 
-// 交互
+// 【改动2】交互刹车系统（专门加强了手机端）
 function setupInteraction() {
     let pauseTimeout;
     const scroller = document.getElementById('gallery-wrapper');
+
+    // --- 电脑端鼠标交互 ---
     window.addEventListener('mousemove', () => {
         isPaused = true;
         clearTimeout(pauseTimeout);
         pauseTimeout = setTimeout(() => { isPaused = false; }, 1000);
     });
-    scroller.addEventListener('mouseenter', () => isPaused = true);
+
+    // --- 手机端手指交互 (新增) ---
+    // 手指一按屏幕，立马停车
+    scroller.addEventListener('touchstart', () => {
+        isPaused = true;
+        clearTimeout(pauseTimeout);
+    }, { passive: true });
+
+    // 手指离开屏幕，等1秒后再启动
+    scroller.addEventListener('touchend', () => {
+        pauseTimeout = setTimeout(() => { isPaused = false; }, 1000);
+    });
 }
 
-// 弹窗
+// 弹窗逻辑
 function openModal(item) {
     const modal = document.getElementById('modal');
     document.getElementById('modalImage').src = item.imageUrl;
@@ -107,7 +117,7 @@ function openModal(item) {
     
     modal.style.display = 'flex';
     requestAnimationFrame(() => modal.classList.add('show'));
-    isPaused = true;
+    isPaused = true; // 打开弹窗时必须暂停
 }
 
 function closeModal() {
@@ -117,7 +127,8 @@ function closeModal() {
         modal.style.display = 'none';
         document.getElementById('modalImage').src = '';
     }, 300);
-    isPaused = false;
+    // 关掉弹窗后，自动恢复滚动（由 setupInteraction 接管）
+    isPaused = false; 
 }
 
 function copyPrompt() {
