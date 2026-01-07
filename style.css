@@ -60,7 +60,7 @@ body::before {
     padding-top: 100px; 
     padding-left: 10px; padding-right: 10px;
 }
-/* 美化滚动条 (Chrome/Safari) */
+/* 美化滚动条 */
 #gallery-wrapper::-webkit-scrollbar { width: 6px; }
 #gallery-wrapper::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 #gallery-wrapper::-webkit-scrollbar-track { background: transparent; }
