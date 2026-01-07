@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('data.json')
         .then(res => res.json())
         .then(data => {
-            // 按 ID 倒序（最新在最前）
-            allData = data.sort((a, b) => b.id - a.id);
+            // 删掉了 sort，现在完全听你的，文件里谁在前，谁就在前
+            allData = data; 
             initGallery();
             
             // 2. 只有在电脑端开启自动滚动 (屏幕宽度 > 768)
@@ -164,3 +164,4 @@ window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(initGallery, 300);
 });
+
