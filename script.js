@@ -9,23 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             allData = data; 
             initGallery(); // 渲染画廊
-            
-            // 【改动1】删掉了判断屏幕宽度的代码
-            // 现在不管手机还是电脑，直接启动自动滚动！
             startAutoScroll();
             setupInteraction();
+            setupNavbarScroll(); // 启动导航栏变色监听
         })
         .catch(err => console.error('Error:', err));
 });
 
 function initGallery() {
-    // 必须是 columns-container，只操作图片区，标题才安全
     const container = document.getElementById('columns-container');
     if (!container) return; 
 
     container.innerHTML = ''; 
-    
-    // 手机2列，电脑4列
     const colCount = window.innerWidth <= 768 ? 2 : 4;
     
     const columns = [];
@@ -43,13 +38,11 @@ function initGallery() {
         card.onclick = () => openModal(item);
 
         if (window.innerWidth <= 768) {
-            // 手机版结构
             card.innerHTML = `
                 <img src="${item.imageUrl}" loading="lazy" alt="${item.title}">
                 <div class="card-info"><div class="card-title">${item.title}</div></div>
             `;
         } else {
-            // 电脑版结构
             card.innerHTML = `
                 <img src="${item.imageUrl}" loading="lazy" alt="${item.title}">
                 <div class="card-info">
@@ -63,15 +56,12 @@ function initGallery() {
     });
 }
 
-// 自动滚屏逻辑
 function startAutoScroll() {
     const scroller = document.getElementById('gallery-wrapper');
-    const speed = 0.5; // 滚动速度，嫌快就改小点（比如 0.3）
+    const speed = 0.5; 
 
     function step() {
-        // 只有没暂停的时候才滚
         if (!isPaused) {
-            // 如果还没滚到底，就继续滚
             if ((scroller.scrollTop + scroller.clientHeight) < scroller.scrollHeight) {
                 scroller.scrollBy(0, speed);
             }
@@ -81,32 +71,26 @@ function startAutoScroll() {
     step();
 }
 
-// 【改动2】交互刹车系统（专门加强了手机端）
 function setupInteraction() {
     let pauseTimeout;
     const scroller = document.getElementById('gallery-wrapper');
 
-    // --- 电脑端鼠标交互 ---
     window.addEventListener('mousemove', () => {
         isPaused = true;
         clearTimeout(pauseTimeout);
         pauseTimeout = setTimeout(() => { isPaused = false; }, 1000);
     });
 
-    // --- 手机端手指交互 (新增) ---
-    // 手指一按屏幕，立马停车
     scroller.addEventListener('touchstart', () => {
         isPaused = true;
         clearTimeout(pauseTimeout);
     }, { passive: true });
 
-    // 手指离开屏幕，等1秒后再启动
     scroller.addEventListener('touchend', () => {
         pauseTimeout = setTimeout(() => { isPaused = false; }, 1000);
     });
 }
 
-// 弹窗逻辑
 function openModal(item) {
     const modal = document.getElementById('modal');
     document.getElementById('modalImage').src = item.imageUrl;
@@ -117,7 +101,7 @@ function openModal(item) {
     
     modal.style.display = 'flex';
     requestAnimationFrame(() => modal.classList.add('show'));
-    isPaused = true; // 打开弹窗时必须暂停
+    isPaused = true; 
 }
 
 function closeModal() {
@@ -127,7 +111,6 @@ function closeModal() {
         modal.style.display = 'none';
         document.getElementById('modalImage').src = '';
     }, 300);
-    // 关掉弹窗后，自动恢复滚动（由 setupInteraction 接管）
     isPaused = false; 
 }
 
@@ -153,17 +136,18 @@ window.addEventListener('resize', () => {
     resizeTimer = setTimeout(initGallery, 300);
 });
 
-/* --- 最终修正版：滚动监听 --- */
-const scrollContainer = document.getElementById('gallery-wrapper');
-const navbar = document.querySelector('.navbar');
+// ✅ 独立的导航栏滚动监听逻辑 (整理到这里，防止冲突)
+function setupNavbarScroll() {
+    const scrollContainer = document.getElementById('gallery-wrapper');
+    const navbar = document.querySelector('.navbar');
 
-if (scrollContainer && navbar) {
-    scrollContainer.addEventListener('scroll', () => {
-        // 只要动了 10像素，就启动变色
-        if (scrollContainer.scrollTop > 10) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
+    if (scrollContainer && navbar) {
+        scrollContainer.addEventListener('scroll', () => {
+            if (scrollContainer.scrollTop > 10) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    }
 }
