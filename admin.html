@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>New Entry | 发布工具</title>
+    <title>发布工具 | AI PROMPT</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,172 +15,154 @@
         /* --- 发布页专用精修样式 --- */
         body { 
             overflow-y: auto !important; 
-            position: relative !important; 
             height: auto !important; 
-            padding-bottom: 80px; /* 底部留白 */
+            padding-bottom: 80px;
+            background: #050505; 
         }
 
         .admin-wrapper { 
-            max-width: 600px; 
+            max-width: 500px; /* 宽度收窄，显得精致 */
             margin: 0 auto; 
             padding: 100px 20px 40px; 
         }
 
+        /* 标题：大幅缩小，不再是巨无霸 */
         .page-title { 
             font-family: 'Playfair Display', serif; 
-            font-size: 2.5rem; 
+            font-size: 1.8rem; /* 从 2.5rem 降下来 */
             color: #fff; 
-            margin-bottom: 40px; 
+            margin-bottom: 5px; 
             text-align: center; 
-            letter-spacing: -1px;
+            letter-spacing: 0.5px;
+        }
+        .page-subtitle {
+            text-align: center;
+            color: #555;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 50px; /* 增加留白 */
         }
 
-        /* 表单卡片：磨砂黑金感 */
-        .form-card { 
-            background: rgba(18, 18, 18, 0.8); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 12px; 
-            padding: 30px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6); 
+        /* 表单区域：去框化，只留线条 */
+        .form-group { 
+            margin-bottom: 35px; 
+            position: relative;
         }
-
-        .form-group { margin-bottom: 25px; }
         
         label { 
             display: block; 
-            color: #d4af37; /* 香槟金 */
-            font-size: 0.7rem; 
-            letter-spacing: 2px; 
+            color: #666; 
+            font-size: 0.65rem; 
+            letter-spacing: 1.5px; 
             text-transform: uppercase; 
-            margin-bottom: 12px; 
-            font-weight: 700; 
-            font-family: 'Inter', sans-serif;
+            margin-bottom: 8px; 
+            font-weight: 600; 
         }
 
-        /* 输入框：极简无边框感 */
+        /* 输入框：极简底边线风格 (像填支票一样高级) */
         input, textarea { 
             width: 100%; 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
+            background: transparent; 
+            border: none; 
+            border-bottom: 1px solid #333; /* 只有底边线 */
             color: #fff; 
-            padding: 16px; 
-            border-radius: 6px; 
+            padding: 8px 0; 
+            border-radius: 0; 
             font-family: 'Inter', sans-serif; 
-            font-size: 14px; 
+            font-size: 15px; 
             transition: all 0.3s ease; 
         }
         
+        /* 聚焦时，底边线变亮白 */
         input:focus, textarea:focus { 
             outline: none; 
-            background: rgba(0, 0, 0, 0.5); 
-            border-color: #d4af37; /* 聚焦变金 */
+            border-bottom-color: #fff; 
+            background: transparent;
         }
         
         textarea { 
             resize: vertical; 
-            min-height: 120px; 
+            min-height: 80px; 
             line-height: 1.6; 
         }
 
-        /* 图片上传区 */
+        /* 图片选择：极简线框 */
         .upload-area { 
-            border: 1px dashed rgba(255,255,255,0.2); 
-            border-radius: 6px; 
-            padding: 30px; 
+            border: 1px dashed #333; 
+            border-radius: 4px; 
+            padding: 20px; 
             text-align: center; 
             cursor: pointer; 
-            transition: 0.3s; 
-            color: #666; 
-            font-size: 13px; 
-            background: rgba(0,0,0,0.2);
+            color: #555; 
+            font-size: 12px; 
+            transition: 0.3s;
         }
-        .upload-area:hover { border-color: #d4af37; color: #fff; }
-        .upload-area.active { border-color: #d4af37; color: #d4af37; background: rgba(212, 175, 55, 0.05); }
+        .upload-area:hover { border-color: #666; color: #888; }
+        .upload-area.active { border-color: #d4af37; color: #d4af37; border-style: solid; }
 
-        /* 生成按钮：拒绝土气紫色，使用高级白/金 */
-        .btn-submit { 
+        /* 生成按钮：纯白胶囊，黑字，最经典的时尚反差 */
+        .btn-generate { 
             width: 100%; 
-            padding: 18px; 
-            background: #fff; /* 纯白背景 */
-            color: #000; 
+            padding: 16px; 
+            background: #fff; /* 白底 */
+            color: #000; /* 黑字 */
             border: none; 
-            border-radius: 4px; 
+            border-radius: 50px; /* 胶囊形 */
             font-weight: 700; 
-            font-size: 0.9rem; 
+            font-size: 0.85rem; 
             letter-spacing: 1px;
             cursor: pointer; 
             margin-top: 20px;
             text-transform: uppercase;
+            box-shadow: 0 5px 20px rgba(255,255,255,0.05);
             transition: transform 0.2s, background 0.2s; 
         }
-        .btn-submit:hover { background: #d4af37; } /* 悬停变金 */
-        .btn-submit:active { transform: scale(0.98); }
+        .btn-generate:hover { background: #d4af37; /* 悬停变金 */ }
+        .btn-generate:active { transform: scale(0.98); }
 
-        /* --- 结果显示区 (带内部滚动条) --- */
+        /* 结果框：隐形黑盒，出来时不突兀 */
         .result-box { 
+            display: none; 
             margin-top: 40px; 
-            background: #000; 
-            border: 1px solid #333; 
-            border-radius: 8px; 
-            display: none; /* 默认隐藏 */
+            background: #0a0a0a; 
+            border: 1px solid #222; 
+            border-radius: 6px; 
             overflow: hidden; 
-            animation: fadeInUp 0.4s ease;
         }
 
         .result-header { 
             background: #111; 
-            padding: 12px 20px; 
-            border-bottom: 1px solid #222; 
+            padding: 8px 15px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
+            border-bottom: 1px solid #1a1a1a;
         }
         
-        .result-label { 
-            color: #666; font-size: 11px; font-weight: 600; letter-spacing: 1px; 
-        }
+        .result-label { color: #444; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
 
-        /* 复制按钮 */
-        .btn-copy-code { 
-            background: transparent; 
-            border: 1px solid #444; 
-            color: #aaa; 
-            padding: 6px 16px; 
-            border-radius: 50px; 
-            font-size: 11px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: all 0.2s;
+        .btn-copy { 
+            background: transparent; border: none; 
+            color: #d4af37; font-size: 10px; font-weight: 700; cursor: pointer; letter-spacing: 1px;
         }
-        .btn-copy-code:hover { border-color: #fff; color: #fff; }
-
-        /* 代码区域：限制高度 + 内部滚动 */
+        
+        /* 代码显示区 */
         .code-content { 
-            padding: 20px; 
-            color: #a5f3fc; /* 青色代码高亮 */
-            font-family: 'JetBrains Mono', monospace; 
-            font-size: 12px; 
-            line-height: 1.5; 
-            white-space: pre-wrap; 
-            word-break: break-all; 
-            
-            /* 关键：限制高度，超出滚动 */
-            max-height: 250px; 
-            overflow-y: auto; 
+            padding: 15px; 
+            color: #a5f3fc; 
+            font-family: monospace; font-size: 11px; line-height: 1.5; 
+            white-space: pre-wrap; word-break: break-all; 
+            max-height: 200px; overflow-y: auto; 
         }
-
-        /* 自定义滚动条美化 */
-        .code-content::-webkit-scrollbar { width: 6px; }
-        .code-content::-webkit-scrollbar-track { background: #111; }
-        .code-content::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        .code-content::-webkit-scrollbar-thumb:hover { background: #555; }
-
-        @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
         
+        /* 滚动条 */
+        .code-content::-webkit-scrollbar { width: 4px; }
+        .code-content::-webkit-scrollbar-track { background: #0a0a0a; }
+        .code-content::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
         @media (max-width: 768px) {
             .admin-wrapper { padding-top: 90px; }
-            .page-title { font-size: 2rem; }
         }
     </style>
 </head>
@@ -189,8 +171,7 @@
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4C14 9 15 10 20 12C15 14 14 15 12 20C10 15 9 14 4 12C9 10 10 9 12 4Z" fill="#fff"/></svg>
-                <span class="logo-text">AI PROMPT</span>
+                <span class="logo-text" style="color:#fff; font-weight:bold;">AI PROMPT</span>
             </div>
             <div class="nav-links">
                 <a href="index.html">方案</a>
@@ -200,109 +181,89 @@
     </nav>
 
     <div class="admin-wrapper">
-        <h1 class="page-title">New Entry</h1>
+        <h1 class="page-title">Create Entry</h1>
+        <p class="page-subtitle">Add to Collection</p>
         
-        <div class="form-card">
+        <div class="form-container">
             <div class="form-group">
-                <label>Title / 标题</label>
-                <input type="text" id="title" placeholder="作品名称...">
+                <label>Title</label>
+                <input type="text" id="title" placeholder="Enter title...">
             </div>
 
             <div class="form-group">
-                <label>Category / 分类</label>
-                <input type="text" id="category" placeholder="例如：人像 / 摄影">
+                <label>Category</label>
+                <input type="text" id="category" placeholder="Portrait / Landscape...">
             </div>
             
             <div class="form-group">
-                <label>Image / 图片路径</label>
+                <label>Image Source</label>
                 <input type="file" id="fileIn" hidden accept="image/*">
                 <div class="upload-area" onclick="document.getElementById('fileIn').click()" id="dropZone">
-                    + 选择图片 (自动生成路径)
+                    TAP TO SELECT IMAGE
                 </div>
                 <input type="hidden" id="imgVal">
             </div>
 
             <div class="form-group">
-                <label>Prompt / 提示词</label>
-                <textarea id="prompt" placeholder="在此粘贴你的 AI 提示词..."></textarea>
+                <label>Prompt Details</label>
+                <textarea id="prompt" placeholder="Paste your AI prompt here..."></textarea>
             </div>
 
-            <button class="btn-submit" onclick="gen()">GENERATE JSON CODE</button>
+            <button class="btn-generate" onclick="gen()">Generate Code</button>
 
             <div class="result-box" id="resBox">
                 <div class="result-header">
-                    <span class="result-label">JSON OUTPUT</span>
-                    <button class="btn-copy-code" id="btnCopy" onclick="copyC()">COPY CODE</button>
+                    <span class="result-label">JSON DATA</span>
+                    <button class="btn-copy" id="btnCopy" onclick="copyC()">COPY</button>
                 </div>
                 <div class="code-content" id="codeShow"></div>
-                
-                <p style="color:#444; font-size:10px; text-align:center; padding:10px;">
-                    Copy and paste this into your data.json file.
-                </p>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. 图片选择逻辑
+        // 图片逻辑
         document.getElementById('fileIn').onchange = function(e) {
             if(e.target.files[0]) {
                 const name = e.target.files[0].name;
-                document.getElementById('dropZone').innerText = "✅ " + name;
+                document.getElementById('dropZone').innerText = "SELECTED: " + name;
                 document.getElementById('dropZone').classList.add('active');
-                // 自动生成路径格式
                 document.getElementById('imgVal').value = "images/" + name;
             }
         };
 
-        // 2. 生成 JSON 逻辑
+        // 生成逻辑
         function gen() {
-            // 获取值，如果没有填，就给默认值，防止空白
             let title = document.getElementById('title').value || "Untitled";
             let category = document.getElementById('category').value || "Uncategorized";
             let imageUrl = document.getElementById('imgVal').value || "images/placeholder.jpg"; 
             let prompt = document.getElementById('prompt').value || "";
 
-            // 构建对象
             let d = {
-                id: Date.now(), // 用时间戳做唯一ID
+                id: Date.now(),
                 title: title,
                 category: category,
                 imageUrl: imageUrl,
                 prompt: prompt
             };
             
-            // 格式化 JSON (4空格缩进)
             let s = JSON.stringify(d, null, 4);
-            
-            // 放入盒子，加上逗号
             document.getElementById('codeShow').innerText = "    " + s + ",";
-            
-            // 显示盒子
             document.getElementById('resBox').style.display = 'block';
             
-            // 平滑滚动到底部查看结果
-            document.getElementById('resBox').scrollIntoView({behavior: "smooth", block: "center"});
+            // 稍微往下滚一点
+            setTimeout(() => {
+                document.getElementById('resBox').scrollIntoView({behavior: "smooth", block: "nearest"});
+            }, 100);
         }
 
-        // 3. 复制逻辑
+        // 复制逻辑
         function copyC() {
-            const codeText = document.getElementById('codeShow').innerText;
-            navigator.clipboard.writeText(codeText).then(() => {
+            const text = document.getElementById('codeShow').innerText;
+            navigator.clipboard.writeText(text).then(() => {
                 const btn = document.getElementById('btnCopy');
-                const originalText = btn.innerText;
-                
-                // 变绿反馈
-                btn.innerText = "COPIED ✓";
-                btn.style.borderColor = "#10b981";
-                btn.style.color = "#10b981";
-                
-                // 2秒后恢复
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.style.borderColor = "#444";
-                    btn.style.color = "#aaa";
-                }, 2000);
+                btn.innerText = "COPIED";
+                setTimeout(() => { btn.innerText = "COPY"; }, 2000);
             });
         }
     </script>
