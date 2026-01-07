@@ -2,57 +2,91 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>发布工具 PRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>发布工具 | AI PROMPT</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
+    
     <style>
-        body { background: #0f0f11; padding-top: 80px; min-height: 100vh; }
-        .admin-box { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .card-form { background: #1a1a1c; padding: 30px; border-radius: 16px; border: 1px solid #333; }
-        label { display: block; color: #aaa; margin-bottom: 8px; font-size: 14px; }
-        input, textarea { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-family: inherit; }
-        input:focus, textarea:focus { border-color: #6366f1; outline: none; }
+        /* 覆盖：让发布页可以滚动 */
+        body { overflow-y: auto !important; position: relative !important; height: auto !important; padding-bottom: 50px; }
+        .admin-wrapper { max-width: 600px; margin: 0 auto; padding: 100px 20px 40px; }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #fff; margin-bottom: 30px; text-align: center; }
+        .form-card { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; color: var(--accent, #d4af37); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+        input, textarea { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 15px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; transition: all 0.3s; }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent, #d4af37); background: rgba(255, 255, 255, 0.05); }
+        textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
         
-        .upload-area { border: 2px dashed #444; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
-        .upload-area:hover { border-color: #6366f1; background: rgba(99,102,241,0.05); }
-        .upload-area.active { border-color: #10b981; color: #10b981; }
+        .upload-area { border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; color: #666; font-size: 13px; }
+        .upload-area:hover { border-color: #fff; color: #fff; }
+        .upload-area.active { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); }
         
-        .btn-gen { width: 100%; background: linear-gradient(135deg, #4E75F6, #E94868); color: #fff; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-submit { width: 100%; padding: 16px; background: #fff; color: #000; border: none; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; margin-top: 10px; }
+        .btn-submit:active { transform: scale(0.98); }
         
-        .result-box { margin-top: 20px; background: #000; padding: 15px; border-radius: 10px; display: none; position: relative; }
-        .code-pre { color: #a5f3fc; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
-        .btn-copy-code { position: absolute; top: 10px; right: 10px; background: #333; color: #fff; border: 1px solid #555; padding: 5px 10px; font-size: 12px; border-radius: 4px; cursor: pointer; }
+        .result-box { margin-top: 30px; background: #000; border: 1px solid #333; border-radius: 12px; padding: 0; display: none; overflow: hidden; animation: slideUp 0.3s ease; }
+        .result-header { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .result-title { color: #888; font-size: 12px; }
+        .btn-copy-code { background: var(--accent, #d4af37); color: #000; border: none; padding: 6px 15px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .code-content { padding: 15px; color: #a5f3fc; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow-y: auto; }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        
+        @media (max-width: 768px) {
+            .admin-wrapper { padding-top: 80px; padding-left: 15px; padding-right: 15px; }
+            .form-card { padding: 20px; }
+            .page-title { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-content">
-            <div class="logo"><span class="logo-text">AI PROMPT ADMIN</span></div>
-            <div class="nav-links"><a href="index.html">返回画廊</a></div>
+            <div class="logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4C14 9 15 10 20 12C15 14 14 15 12 20C10 15 9 14 4 12C9 10 10 9 12 4Z" fill="#fff"/></svg>
+                <span class="logo-text">AI PROMPT</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">画廊</a>
+                <a href="admin.html" class="active">发布</a>
+            </div>
         </div>
     </nav>
 
-    <div class="admin-box">
-        <div class="card-form">
-            <h2>新建作品</h2>
-            <label>标题</label><input type="text" id="title">
-            <label>分类</label><input type="text" id="category">
-            
-            <label>图片 (点击选择)</label>
-            <input type="file" id="fileIn" hidden accept="image/*">
-            <div class="upload-area" onclick="document.getElementById('fileIn').click()" id="dropZone">
-                📂 点击选择图片
+    <div class="admin-wrapper">
+        <h1 class="page-title">New Entry</h1>
+        <div class="form-card">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="title" placeholder="作品名称...">
             </div>
-            <input type="hidden" id="imgVal">
-
-            <label>提示词</label><textarea id="prompt" rows="6"></textarea>
-
-            <button class="btn-gen" onclick="gen()">生成代码</button>
-
+            <div class="form-group">
+                <label>Category</label>
+                <input type="text" id="category" placeholder="例如：人像 / 摄影">
+            </div>
+            <div class="form-group">
+                <label>Image</label>
+                <input type="file" id="fileIn" hidden accept="image/*">
+                <div class="upload-area" onclick="document.getElementById('fileIn').click()" id="dropZone">+ 点击选择图片</div>
+                <input type="hidden" id="imgVal">
+            </div>
+            <div class="form-group">
+                <label>Prompt</label>
+                <textarea id="prompt" placeholder="粘贴你的 AI 提示词..."></textarea>
+            </div>
+            <button class="btn-submit" onclick="gen()">GENERATE CODE</button>
             <div class="result-box" id="resBox">
-                <button class="btn-copy-code" onclick="copyC()">复制</button>
-                <div class="code-pre" id="codeShow"></div>
-                <p style="color:#555; font-size:12px; margin-top:10px; text-align:center;">复制后粘贴到 data.json 的 [ 后面</p>
+                <div class="result-header">
+                    <span class="result-title">JSON CODE</span>
+                    <button class="btn-copy-code" id="btnCopy" onclick="copyC()">📋 一键复制</button>
+                </div>
+                <div class="code-content" id="codeShow"></div>
+                <p style="color:#555; font-size:11px; margin:10px 15px; text-align:center;">复制成功后，请粘贴到 data.json 的 [ 之后</p>
             </div>
         </div>
     </div>
@@ -65,25 +99,24 @@
                 document.getElementById('imgVal').value = "images/" + e.target.files[0].name;
             }
         };
-
         function gen() {
-            let d = {
-                id: Date.now(),
-                title: document.getElementById('title').value || "未命名",
-                category: document.getElementById('category').value || "通用",
-                imageUrl: document.getElementById('imgVal').value,
-                prompt: document.getElementById('prompt').value
-            };
-            if(!d.imageUrl) return alert('没图你说个啥？');
-            
+            let title = document.getElementById('title').value || "未命名";
+            let category = document.getElementById('category').value || "默认分类";
+            // 修复：不选图也能生成，给个默认图
+            let imageUrl = document.getElementById('imgVal').value || "images/placeholder.jpg"; 
+            let prompt = document.getElementById('prompt').value || "暂无提示词";
+            let d = { id: Date.now(), title: title, category: category, imageUrl: imageUrl, prompt: prompt };
             let s = JSON.stringify(d, null, 4);
             document.getElementById('codeShow').innerText = "    " + s + ",";
             document.getElementById('resBox').style.display = 'block';
+            document.getElementById('resBox').scrollIntoView({behavior: "smooth"});
         }
-
         function copyC() {
-            navigator.clipboard.writeText(document.getElementById('codeShow').innerText);
-            alert('已复制！去 data.json 粘贴吧。');
+            navigator.clipboard.writeText(document.getElementById('codeShow').innerText).then(() => {
+                let btn = document.getElementById('btnCopy');
+                btn.innerText = "✅ 已复制！"; btn.style.background = "#10b981"; btn.style.color = "#fff";
+                setTimeout(() => { btn.innerText = "📋 一键复制"; btn.style.background = "#d4af37"; btn.style.color = "#000"; }, 2000);
+            });
         }
     </script>
 </body>
