@@ -91,17 +91,18 @@ body::before {
 
 /* --- 4. 吸顶分类条 (新增) --- */
 .sticky-category-bar {
-    position: -webkit-sticky; 
-    position: sticky;         /* 吸顶魔法 */
-    top: 60px;                   /* 吸在容器最顶端 */
+    position: -webkit-sticky;
+    position: sticky;
+    top: 60px;               /* 最终定死：60px，严丝合缝 */
     z-index: 900;
-    
-    padding: 5px 0;
+
+    padding: 5px 0;          /* 精致细条 */
     margin-bottom: 20px;
-    
-    /* 吸顶时的背景：半透明黑 + 磨砂 */
-    background: #050505; 
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+
+    /* 统一的磨砂玻璃质感 */
+    background: rgba(5, 5, 5, 0.85); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -215,28 +216,18 @@ body::before {
 
 /* --- 放在 style.css 最后面 --- */
 /* --- 导航栏：豪华渐变版 --- */
+/* --- 顶栏滚动特效 (最终版) --- */
 .navbar {
-    background: transparent; /* 平时：完全透明 */
-    /* 关键点：把时间改成 0.6s，加长一倍，拒绝“吓一跳” */
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
-    
-    /* 平时没有模糊，保持通透 */
-    backdrop-filter: blur(0px); 
-    -webkit-backdrop-filter: blur(0px);
+    background: transparent; /* 初始：全透明 */
+    transition: all 0.6s ease; /* 慢动作过渡 */
+    backdrop-filter: blur(0px);
 }
 
-/* 当滚动触发时 */
 .navbar.scrolled {
-    /* 1. 颜色：改成 85% 的黑，留一点点透气感 */
-    background: rgba(5, 5, 5, 0.85) !important;
-    
-    /* 2. 特效：加上10px的磨砂模糊，让下面的图片滑过时产生光影美感 */
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    
-    /* 3. 阴影：柔和的边界 */
+    background: rgba(5, 5, 5, 0.85) !important; /* 滚动后：透黑 */
+    backdrop-filter: blur(15px); /* 加磨砂 */
     box-shadow: 0 4px 30px rgba(0,0,0,0.3);
-    
-    /* 4. 边框：只有滚动时才显示一条极细的分割线 */
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
+
+    
