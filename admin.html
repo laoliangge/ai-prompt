@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>发布工具 | AI PROMPT</title>
+    <title>New Entry | 发布工具</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,56 +12,180 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* 覆盖：让发布页可以滚动 */
-        body { overflow-y: auto !important; position: relative !important; height: auto !important; padding-bottom: 50px; }
-        .admin-wrapper { max-width: 600px; margin: 0 auto; padding: 100px 20px 40px; }
-        .page-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #fff; margin-bottom: 30px; text-align: center; }
-        
+        /* --- 发布页专用精修样式 --- */
+        body { 
+            overflow-y: auto !important; 
+            position: relative !important; 
+            height: auto !important; 
+            padding-bottom: 80px; /* 底部留白 */
+        }
+
+        .admin-wrapper { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 100px 20px 40px; 
+        }
+
+        .page-title { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 2.5rem; 
+            color: #fff; 
+            margin-bottom: 40px; 
+            text-align: center; 
+            letter-spacing: -1px;
+        }
+
+        /* 表单卡片：磨砂黑金感 */
         .form-card { 
-            background: rgba(20, 20, 20, 0.6); 
+            background: rgba(18, 18, 18, 0.8); 
             backdrop-filter: blur(20px); 
             border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 16px; 
+            border-radius: 12px; 
             padding: 30px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6); 
         }
-        
+
         .form-group { margin-bottom: 25px; }
-        label { display: block; color: var(--accent, #d4af37); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
         
-        input, textarea { 
-            width: 100%; background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; 
-            padding: 15px; border-radius: 8px; 
-            font-family: 'Inter', sans-serif; font-size: 14px; 
-            transition: all 0.3s; 
+        label { 
+            display: block; 
+            color: #d4af37; /* 香槟金 */
+            font-size: 0.7rem; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            margin-bottom: 12px; 
+            font-weight: 700; 
+            font-family: 'Inter', sans-serif;
         }
-        input:focus, textarea:focus { outline: none; border-color: var(--accent, #d4af37); background: rgba(255, 255, 255, 0.05); }
-        textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+
+        /* 输入框：极简无边框感 */
+        input, textarea { 
+            width: 100%; 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            color: #fff; 
+            padding: 16px; 
+            border-radius: 6px; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 14px; 
+            transition: all 0.3s ease; 
+        }
         
-        .upload-area { border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; color: #666; font-size: 13px; }
-        .upload-area:hover { border-color: #fff; color: #fff; }
-        .upload-area.active { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); }
+        input:focus, textarea:focus { 
+            outline: none; 
+            background: rgba(0, 0, 0, 0.5); 
+            border-color: #d4af37; /* 聚焦变金 */
+        }
         
-        .btn-submit { width: 100%; padding: 16px; background: #fff; color: #000; border: none; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; margin-top: 10px; }
+        textarea { 
+            resize: vertical; 
+            min-height: 120px; 
+            line-height: 1.6; 
+        }
+
+        /* 图片上传区 */
+        .upload-area { 
+            border: 1px dashed rgba(255,255,255,0.2); 
+            border-radius: 6px; 
+            padding: 30px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            color: #666; 
+            font-size: 13px; 
+            background: rgba(0,0,0,0.2);
+        }
+        .upload-area:hover { border-color: #d4af37; color: #fff; }
+        .upload-area.active { border-color: #d4af37; color: #d4af37; background: rgba(212, 175, 55, 0.05); }
+
+        /* 生成按钮：拒绝土气紫色，使用高级白/金 */
+        .btn-submit { 
+            width: 100%; 
+            padding: 18px; 
+            background: #fff; /* 纯白背景 */
+            color: #000; 
+            border: none; 
+            border-radius: 4px; 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            letter-spacing: 1px;
+            cursor: pointer; 
+            margin-top: 20px;
+            text-transform: uppercase;
+            transition: transform 0.2s, background 0.2s; 
+        }
+        .btn-submit:hover { background: #d4af37; } /* 悬停变金 */
         .btn-submit:active { transform: scale(0.98); }
+
+        /* --- 结果显示区 (带内部滚动条) --- */
+        .result-box { 
+            margin-top: 40px; 
+            background: #000; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            display: none; /* 默认隐藏 */
+            overflow: hidden; 
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .result-header { 
+            background: #111; 
+            padding: 12px 20px; 
+            border-bottom: 1px solid #222; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
         
-        .result-box { margin-top: 30px; background: #000; border: 1px solid #333; border-radius: 12px; padding: 0; display: none; overflow: hidden; animation: slideUp 0.3s ease; }
-        .result-header { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
-        .result-title { color: #888; font-size: 12px; }
-        .btn-copy-code { background: var(--accent, #d4af37); color: #000; border: none; padding: 6px 15px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; }
-        
-        .code-content { padding: 15px; color: #a5f3fc; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow-y: auto; }
-        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .result-label { 
+            color: #666; font-size: 11px; font-weight: 600; letter-spacing: 1px; 
+        }
+
+        /* 复制按钮 */
+        .btn-copy-code { 
+            background: transparent; 
+            border: 1px solid #444; 
+            color: #aaa; 
+            padding: 6px 16px; 
+            border-radius: 50px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        .btn-copy-code:hover { border-color: #fff; color: #fff; }
+
+        /* 代码区域：限制高度 + 内部滚动 */
+        .code-content { 
+            padding: 20px; 
+            color: #a5f3fc; /* 青色代码高亮 */
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 12px; 
+            line-height: 1.5; 
+            white-space: pre-wrap; 
+            word-break: break-all; 
+            
+            /* 关键：限制高度，超出滚动 */
+            max-height: 250px; 
+            overflow-y: auto; 
+        }
+
+        /* 自定义滚动条美化 */
+        .code-content::-webkit-scrollbar { width: 6px; }
+        .code-content::-webkit-scrollbar-track { background: #111; }
+        .code-content::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        .code-content::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
         
         @media (max-width: 768px) {
-            .admin-wrapper { padding-top: 80px; padding-left: 15px; padding-right: 15px; }
-            .form-card { padding: 20px; }
+            .admin-wrapper { padding-top: 90px; }
             .page-title { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
+
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
@@ -77,65 +201,110 @@
 
     <div class="admin-wrapper">
         <h1 class="page-title">New Entry</h1>
+        
         <div class="form-card">
             <div class="form-group">
-                <label>Title</label>
+                <label>Title / 标题</label>
                 <input type="text" id="title" placeholder="作品名称...">
             </div>
+
             <div class="form-group">
-                <label>Category</label>
+                <label>Category / 分类</label>
                 <input type="text" id="category" placeholder="例如：人像 / 摄影">
             </div>
+            
             <div class="form-group">
-                <label>Image</label>
+                <label>Image / 图片路径</label>
                 <input type="file" id="fileIn" hidden accept="image/*">
-                <div class="upload-area" onclick="document.getElementById('fileIn').click()" id="dropZone">+ 点击选择图片</div>
+                <div class="upload-area" onclick="document.getElementById('fileIn').click()" id="dropZone">
+                    + 选择图片 (自动生成路径)
+                </div>
                 <input type="hidden" id="imgVal">
             </div>
+
             <div class="form-group">
-                <label>Prompt</label>
-                <textarea id="prompt" placeholder="粘贴你的 AI 提示词..."></textarea>
+                <label>Prompt / 提示词</label>
+                <textarea id="prompt" placeholder="在此粘贴你的 AI 提示词..."></textarea>
             </div>
-            <button class="btn-submit" onclick="gen()">GENERATE CODE</button>
+
+            <button class="btn-submit" onclick="gen()">GENERATE JSON CODE</button>
+
             <div class="result-box" id="resBox">
                 <div class="result-header">
-                    <span class="result-title">JSON CODE</span>
-                    <button class="btn-copy-code" id="btnCopy" onclick="copyC()">📋 一键复制</button>
+                    <span class="result-label">JSON OUTPUT</span>
+                    <button class="btn-copy-code" id="btnCopy" onclick="copyC()">COPY CODE</button>
                 </div>
                 <div class="code-content" id="codeShow"></div>
-                <p style="color:#555; font-size:11px; margin:10px 15px; text-align:center;">复制成功后，请粘贴到 data.json 的 [ 之后</p>
+                
+                <p style="color:#444; font-size:10px; text-align:center; padding:10px;">
+                    Copy and paste this into your data.json file.
+                </p>
             </div>
         </div>
     </div>
 
     <script>
+        // 1. 图片选择逻辑
         document.getElementById('fileIn').onchange = function(e) {
             if(e.target.files[0]) {
-                document.getElementById('dropZone').innerText = "✅ 已选: " + e.target.files[0].name;
+                const name = e.target.files[0].name;
+                document.getElementById('dropZone').innerText = "✅ " + name;
                 document.getElementById('dropZone').classList.add('active');
-                document.getElementById('imgVal').value = "images/" + e.target.files[0].name;
+                // 自动生成路径格式
+                document.getElementById('imgVal').value = "images/" + name;
             }
         };
+
+        // 2. 生成 JSON 逻辑
         function gen() {
-            let title = document.getElementById('title').value || "未命名";
-            let category = document.getElementById('category').value || "默认分类";
-            // 修复：不选图也能生成，给个默认图
+            // 获取值，如果没有填，就给默认值，防止空白
+            let title = document.getElementById('title').value || "Untitled";
+            let category = document.getElementById('category').value || "Uncategorized";
             let imageUrl = document.getElementById('imgVal').value || "images/placeholder.jpg"; 
-            let prompt = document.getElementById('prompt').value || "暂无提示词";
-            let d = { id: Date.now(), title: title, category: category, imageUrl: imageUrl, prompt: prompt };
+            let prompt = document.getElementById('prompt').value || "";
+
+            // 构建对象
+            let d = {
+                id: Date.now(), // 用时间戳做唯一ID
+                title: title,
+                category: category,
+                imageUrl: imageUrl,
+                prompt: prompt
+            };
+            
+            // 格式化 JSON (4空格缩进)
             let s = JSON.stringify(d, null, 4);
+            
+            // 放入盒子，加上逗号
             document.getElementById('codeShow').innerText = "    " + s + ",";
+            
+            // 显示盒子
             document.getElementById('resBox').style.display = 'block';
-            document.getElementById('resBox').scrollIntoView({behavior: "smooth"});
+            
+            // 平滑滚动到底部查看结果
+            document.getElementById('resBox').scrollIntoView({behavior: "smooth", block: "center"});
         }
+
+        // 3. 复制逻辑
         function copyC() {
-            navigator.clipboard.writeText(document.getElementById('codeShow').innerText).then(() => {
-                let btn = document.getElementById('btnCopy');
-                btn.innerText = "✅ 已复制！"; btn.style.background = "#10b981"; btn.style.color = "#fff";
-                setTimeout(() => { btn.innerText = "📋 一键复制"; btn.style.background = "#d4af37"; btn.style.color = "#000"; }, 2000);
+            const codeText = document.getElementById('codeShow').innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const btn = document.getElementById('btnCopy');
+                const originalText = btn.innerText;
+                
+                // 变绿反馈
+                btn.innerText = "COPIED ✓";
+                btn.style.borderColor = "#10b981";
+                btn.style.color = "#10b981";
+                
+                // 2秒后恢复
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.borderColor = "#444";
+                    btn.style.color = "#aaa";
+                }, 2000);
             });
         }
     </script>
 </body>
 </html>
-
