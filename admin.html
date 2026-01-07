@@ -16,10 +16,26 @@
         body { overflow-y: auto !important; position: relative !important; height: auto !important; padding-bottom: 50px; }
         .admin-wrapper { max-width: 600px; margin: 0 auto; padding: 100px 20px 40px; }
         .page-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #fff; margin-bottom: 30px; text-align: center; }
-        .form-card { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        
+        .form-card { 
+            background: rgba(20, 20, 20, 0.6); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 16px; 
+            padding: 30px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+        }
+        
         .form-group { margin-bottom: 25px; }
         label { display: block; color: var(--accent, #d4af37); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
-        input, textarea { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 15px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; transition: all 0.3s; }
+        
+        input, textarea { 
+            width: 100%; background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; 
+            padding: 15px; border-radius: 8px; 
+            font-family: 'Inter', sans-serif; font-size: 14px; 
+            transition: all 0.3s; 
+        }
         input:focus, textarea:focus { outline: none; border-color: var(--accent, #d4af37); background: rgba(255, 255, 255, 0.05); }
         textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
         
@@ -34,6 +50,7 @@
         .result-header { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
         .result-title { color: #888; font-size: 12px; }
         .btn-copy-code { background: var(--accent, #d4af37); color: #000; border: none; padding: 6px 15px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        
         .code-content { padding: 15px; color: #a5f3fc; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow-y: auto; }
         @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
         
