@@ -4,33 +4,34 @@ let autoScrollTimer = null;
 let isPaused = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 加载数据
     fetch('data.json')
         .then(res => res.json())
         .then(data => {
-            // 删掉了 sort，现在完全听你的，文件里谁在前，谁就在前
+            // 听你的：不排序，原样保留文件顺序
             allData = data; 
+            
             initGallery();
             
-            // 2. 只有在电脑端开启自动滚动 (屏幕宽度 > 768)
+            // 只有电脑端开启自动滚屏
             if (window.innerWidth > 768) {
                 startAutoScroll();
-                // 监听交互，实现“悬停刹车”
                 setupInteraction();
             }
         })
-        .catch(err => console.error('数据挂了:', err));
+        .catch(err => console.error('Error:', err));
 });
 
-// 初始化画廊 (智能分列)
 function initGallery() {
     const wrapper = document.getElementById('gallery-wrapper');
-    wrapper.innerHTML = ''; // 清空
-
-    // 决定列数：手机2列，电脑4列
+    // 注意：wrapper 内部需要先清空，但因为我们是追加列，所以这里清空 wrapper 的内容
+    wrapper.innerHTML = ''; 
+    
+    // 如果想要 Hero 标题也显示在滚动区域内，得把它加回来，或者在 HTML 里调整
+    // 这里我们只处理图片列
+    
+    // 手机2列，电脑4列
     const colCount = window.innerWidth <= 768 ? 2 : 4;
     
-    // 创建列容器
     const columns = [];
     for (let i = 0; i < colCount; i++) {
         const col = document.createElement('div');
@@ -39,27 +40,18 @@ function initGallery() {
         columns.push(col);
     }
 
-    // 循环发牌 (横向顺序：左->右->左->右)
     allData.forEach((item, index) => {
-        // 算出该给哪一列 (0, 1, 2, 3...)
         const colIndex = index % colCount;
-        
-        // 生成卡片 HTML
         const card = document.createElement('div');
         card.className = 'card';
         card.onclick = () => openModal(item);
 
-        // 根据设备生成不同的内部结构 (保留你的手机标题样式)
         if (window.innerWidth <= 768) {
-            // 手机版结构：极简
             card.innerHTML = `
                 <img src="${item.imageUrl}" loading="lazy" alt="${item.title}">
-                <div class="card-info">
-                    <div class="card-title">${item.title}</div>
-                </div>
+                <div class="card-info"><div class="card-title">${item.title}</div></div>
             `;
         } else {
-            // 电脑版结构：信息全
             card.innerHTML = `
                 <img src="${item.imageUrl}" loading="lazy" alt="${item.title}">
                 <div class="card-info">
@@ -69,22 +61,21 @@ function initGallery() {
                 </div>
             `;
         }
-        
-        // 放入对应的列
         columns[colIndex].appendChild(card);
     });
 }
 
-// --- 自动滚屏逻辑 ---
+// --- 自动滚屏逻辑 (修改版：滚容器，不滚窗口) ---
 function startAutoScroll() {
-    // 使用 requestAnimationFrame 保证流畅
+    // 目标元素：我们那个可滚动的笼子
+    const scroller = document.getElementById('gallery-wrapper');
+    const speed = 0.5;
+
     function step() {
         if (!isPaused) {
-            // 每次滚动 0.5 像素 (数值越小越慢)
-            window.scrollBy(0, 0.5);
-            // 如果滚到底了，这就得看你想不想循环了，目前先停下
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                // 到底了
+            // 如果没到底
+            if ((scroller.scrollTop + scroller.clientHeight) < scroller.scrollHeight) {
+                scroller.scrollBy(0, speed);
             }
         }
         autoScrollTimer = requestAnimationFrame(step);
@@ -93,28 +84,23 @@ function startAutoScroll() {
 }
 
 function setupInteraction() {
-    // 鼠标动一下，暂停 2 秒，然后继续
     let pauseTimeout;
+    const scroller = document.getElementById('gallery-wrapper');
     
+    // 鼠标动一下，暂停
     window.addEventListener('mousemove', () => {
         isPaused = true;
         clearTimeout(pauseTimeout);
-        pauseTimeout = setTimeout(() => {
-            isPaused = false;
-        }, 1000); // 停顿1秒后继续
+        pauseTimeout = setTimeout(() => { isPaused = false; }, 1000);
     });
-
-    // 鼠标彻底悬停在卡片上时，绝对静止
-    document.getElementById('gallery-wrapper').addEventListener('mouseenter', () => isPaused = true);
-    // 移出画廊区域，继续滚
-    // document.getElementById('gallery-wrapper').addEventListener('mouseleave', () => isPaused = false);
+    
+    // 鼠标放上去，暂停
+    scroller.addEventListener('mouseenter', () => isPaused = true);
 }
 
 // --- 弹窗逻辑 ---
 function openModal(item) {
     const modal = document.getElementById('modal');
-    
-    // 填充数据
     document.getElementById('modalImage').src = item.imageUrl;
     document.getElementById('modalTitle').innerText = item.title;
     document.getElementById('modalCategory').innerText = item.category;
@@ -122,12 +108,9 @@ function openModal(item) {
     document.getElementById('modalId').innerText = 'ID ' + item.id;
 
     modal.style.display = 'flex';
-    // 强制重绘触发渐变动画
     requestAnimationFrame(() => modal.classList.add('show'));
     
-    // 刹车：打开弹窗时，背景绝对不能滚
-    isPaused = true; 
-    document.body.style.overflow = 'hidden';
+    isPaused = true;
 }
 
 function closeModal() {
@@ -138,12 +121,9 @@ function closeModal() {
         document.getElementById('modalImage').src = '';
     }, 300);
     
-    // 恢复背景滚动
     isPaused = false;
-    document.body.style.overflow = 'auto';
 }
 
-// 复制功能
 function copyPrompt() {
     const text = document.getElementById('modalPrompt').innerText;
     navigator.clipboard.writeText(text).then(() => {
@@ -158,10 +138,8 @@ function copyPrompt() {
     });
 }
 
-// 监听窗口大小变化（旋转屏幕时重新排版）
 let resizeTimer;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(initGallery, 300);
 });
-
