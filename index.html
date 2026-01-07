@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>AI PROMPT | 灵感画廊</title>
-    <meta name="description" content="AI 艺术提示词库 - 高端灵感画廊">
-    <meta property="og:title" content="AI PROMPT 灵感画廊">
-    <meta property="og:description" content="沉浸式浏览 AI 艺术作品">
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,9 +17,6 @@
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 4C14 9 15 10 20 12C15 14 14 15 12 20C10 15 9 14 4 12C9 10 10 9 12 4Z" fill="#fff"/>
-                </svg>
                 <span class="logo-text">AI PROMPT</span>
             </div>
             <div class="nav-links">
@@ -35,10 +27,23 @@
     </nav>
 
     <main id="gallery-wrapper">
+        
         <header class="hero">
             <p class="hero-subtitle">CURATED COLLECTION</p>
             <h1>灵感画廊</h1>
         </header>
+
+        <div class="sticky-category-bar">
+            <div class="category-scroll">
+                <button class="cat-pill active">全部</button>
+                <button class="cat-pill">人像摄影</button>
+                <button class="cat-pill">极简主义</button>
+                <button class="cat-pill">赛博朋克</button>
+                <button class="cat-pill">3D 渲染</button>
+                <button class="cat-pill">静物</button>
+                <button class="cat-pill">建筑设计</button>
+            </div>
+        </div>
 
         <div id="columns-container">
             <div class="loading-text">Loading Artworks...</div>
@@ -49,16 +54,11 @@
 
     <div id="modal" class="modal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="close-btn-invisible" onclick="closeModal()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+            <button class="close-btn-invisible" onclick="closeModal()">×</button>
             
             <div class="modal-layout">
                 <div class="modal-img-box">
-                    <img id="modalImage" src="" alt="" onerror="this.src='https://via.placeholder.com/800x1000/111/444?text=Image+Error'">
+                    <img id="modalImage" src="" alt="">
                 </div>
                 
                 <div class="modal-info-box">
@@ -89,4 +89,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
