@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <title>AI PROMPT | 灵感画廊</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta name="description" content="探索 AI 艺术的无限可能，精选高质量提示词库。">
+    <meta property="og:title" content="AI PROMPT 灵感画廊">
+    <meta property="og:description" content="VOGUE级审美，沉浸式浏览体验。">
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,38 +22,37 @@
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 4C14 9 15 10 20 12C15 14 14 15 12 20C10 15 9 14 4 12C9 10 10 9 12 4Z" fill="url(#gemini-gradient)"/>
-                    <defs>
-                        <linearGradient id="gemini-gradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#4E75F6"/>
-                            <stop offset="100%" stop-color="#E94868"/>
-                        </linearGradient>
-                    </defs>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 4C14 9 15 10 20 12C15 14 14 15 12 20C10 15 9 14 4 12C9 10 10 9 12 4Z" fill="#fff"/>
                 </svg>
                 <span class="logo-text">AI PROMPT</span>
             </div>
             <div class="nav-links">
-                <a href="index.html" class="active">产品</a>
-                <a href="admin.html">发布工具</a>
+                <a href="index.html" class="active">画廊</a>
+                <a href="admin.html">发布</a>
             </div>
         </div>
     </nav>
 
-    <header class="hero">
-        <h1>灵感画廊</h1>
-        <p>探索 AI 艺术的无限可能</p>
-    </header>
-
     <main id="gallery-wrapper">
-        <div class="loading-text">正在从云端加载作品...</div>
+        
+        <header class="hero">
+            <p class="hero-subtitle">CURATED COLLECTION</p>
+            <h1>灵感画廊</h1>
+        </header>
+
+        <div id="columns-container">
+            <div class="loading-text">Loading Artworks...</div>
+        </div>
+        
+        <div style="height: 100px;"></div>
     </main>
 
     <div id="modal" class="modal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             
-            <button class="close-btn-invisible" onclick="closeModal()" title="关闭">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button class="close-btn-invisible" onclick="closeModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -51,7 +60,7 @@
             
             <div class="modal-layout">
                 <div class="modal-img-box">
-                    <img id="modalImage" src="" alt="">
+                    <img id="modalImage" src="" alt="" onerror="this.src='https://via.placeholder.com/800x1000/111/444?text=Image+Error'">
                 </div>
                 
                 <div class="modal-info-box">
@@ -62,19 +71,16 @@
 
                     <div class="prompt-container">
                         <div class="prompt-tools">
-                            <span>提示词 / PROMPT</span>
-                            <button class="btn-copy" id="copyBtn" onclick="copyPrompt()">
-                                📄 复制
-                            </button>
+                            <span>PROMPT 指令</span>
+                            <button class="btn-copy" id="copyBtn" onclick="copyPrompt()">COPY</button>
                         </div>
                         <div id="modalPrompt" class="prompt-text"></div>
                     </div>
 
                     <div class="modal-footer">
                         <button class="btn-pill-back" onclick="closeModal()">
-                            <span style="margin-right:4px;">←</span> 返回
+                            <span style="margin-right:6px; font-size:16px;">←</span> BACK
                         </button>
-                        
                         <div id="modalId" class="modal-id"></div>
                     </div>
                 </div>
