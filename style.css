@@ -214,18 +214,29 @@ body::before {
 }
 
 /* --- 放在 style.css 最后面 --- */
+/* --- 导航栏：豪华渐变版 --- */
 .navbar {
-    /* 平时是透明的，而且变色过程要花 0.3秒，像呼吸一样 */
-    transition: background-color 0.3s ease;
+    background: transparent; /* 平时：完全透明 */
+    /* 关键点：把时间改成 0.6s，加长一倍，拒绝“吓一跳” */
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+    
+    /* 平时没有模糊，保持通透 */
+    backdrop-filter: blur(0px); 
+    -webkit-backdrop-filter: blur(0px);
 }
 
+/* 当滚动触发时 */
 .navbar.scrolled {
-    /* 这里的 #050505 必须和你的胶囊条背景色完全一样！ */
-    background: #050505 !important;
-    /* 加点阴影，压住下面的图片 */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    /* 1. 颜色：改成 85% 的黑，留一点点透气感 */
+    background: rgba(5, 5, 5, 0.85) !important;
+    
+    /* 2. 特效：加上10px的磨砂模糊，让下面的图片滑过时产生光影美感 */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    
+    /* 3. 阴影：柔和的边界 */
+    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    
+    /* 4. 边框：只有滚动时才显示一条极细的分割线 */
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-
-
-
-
