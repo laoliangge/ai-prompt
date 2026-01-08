@@ -254,6 +254,7 @@ body::before {
 }
 
 /* --- 🎵 放在 style.css 最后面：音乐按钮样式 --- */
+/* --- 🎵 放在 style.css 最后面：通透发光版 --- */
 .music-btn {
     display: inline-flex;
     align-items: center;
@@ -263,37 +264,42 @@ body::before {
     /* 大小和间距 */
     width: 28px; 
     height: 28px;
-    margin-left: 20px !important; /* 离左边的文字远一点 */
     
-    /* 颜值设置 */
-    background: rgba(255, 255, 255, 0.05); /* 极淡的背景 */
-    border: 1px solid rgba(212, 175, 55, 0.4); /* 香槟金的细圈 */
-    color: var(--accent); /* 音符也是金色的 */
-    border-radius: 50%; /* 变成正圆 */
+    /* ✅ 这里加了 !important 强制把间距拉开，解决刚才不移动的问题 */
+    margin-left: 25px !important; 
+    
+    /* 颜值设置：平时是低调的暗金色 */
+    background: transparent; 
+    border: 1px solid rgba(212, 175, 55, 0.4); 
+    color: var(--accent); 
+    border-radius: 50%; 
     cursor: pointer;
     padding: 0;
     transition: all 0.3s ease;
 }
 
-/* 触摸时的效果 */
+/* ❌ 删掉了 hover 变成实心的代码，防止手机误触变黄 */
 .music-btn:hover {
-    background: var(--accent);
-    color: #000;
     border-color: var(--accent);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.5); /* 微微发光 */
+    color: var(--accent);
+    background: transparent; /* 保持透明 */
 }
 
-/* icon 大小微调 */
-.music-btn .icon {
-    font-size: 14px;
-    margin-top: 1px; /* 视觉修正，让音符居中 */
-}
-
-/* 🔄 播放时的旋转特效 */
+/* 🔄 播放时的特效：只转圈 + 发光，不要实心 */
 .music-btn.playing {
-    border-color: #fff; /* 转起来时圈圈变白一点，更亮 */
-    animation: disk-spin 4s linear infinite; /* 4秒转一圈，永不停歇 */
-    box-shadow: 0 0 8px var(--accent); /* 发点光 */
+    /* 1. 关键：背景保持透明，不要变黄！ */
+    background: transparent !important; 
+    
+    /* 2. 边框和图标高亮 */
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+    
+    /* 3. 霓虹灯光晕：让它看起来“亮”了 */
+    box-shadow: 0 0 15px var(--accent), inset 0 0 5px var(--accent);
+    
+    /* 4. 旋转动画 */
+    animation: disk-spin 4s linear infinite;
 }
 
 /* 定义旋转动画 */
@@ -301,12 +307,3 @@ body::before {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
-
-/* 📱 手机适配：防止把导航栏撑爆 */
-@media (max-width: 768px) {
-    .music-btn { margin-left: 10px; width: 26px; height: 26px; }
-}
-
-
-
-
