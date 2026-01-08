@@ -252,3 +252,57 @@ body::before {
     /* 设为 1.5s，实现你想要的慢慢变黑效果 */
     transition: background-color 1.5s ease, backdrop-filter 1.5s ease;
 }
+
+/* --- 🎵 放在 style.css 最后面：音乐按钮样式 --- */
+.music-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    
+    /* 大小和间距 */
+    width: 28px; 
+    height: 28px;
+    margin-left: 15px; /* 离左边的文字远一点 */
+    
+    /* 颜值设置 */
+    background: rgba(255, 255, 255, 0.05); /* 极淡的背景 */
+    border: 1px solid rgba(212, 175, 55, 0.4); /* 香槟金的细圈 */
+    color: var(--accent); /* 音符也是金色的 */
+    border-radius: 50%; /* 变成正圆 */
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+/* 触摸时的效果 */
+.music-btn:hover {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+/* icon 大小微调 */
+.music-btn .icon {
+    font-size: 14px;
+    margin-top: 1px; /* 视觉修正，让音符居中 */
+}
+
+/* 🔄 播放时的旋转特效 */
+.music-btn.playing {
+    border-color: #fff; /* 转起来时圈圈变白一点，更亮 */
+    animation: disk-spin 4s linear infinite; /* 4秒转一圈，永不停歇 */
+    box-shadow: 0 0 8px var(--accent); /* 发点光 */
+}
+
+/* 定义旋转动画 */
+@keyframes disk-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 📱 手机适配：防止把导航栏撑爆 */
+@media (max-width: 768px) {
+    .music-btn { margin-left: 10px; width: 26px; height: 26px; }
+}
