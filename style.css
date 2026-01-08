@@ -225,25 +225,16 @@ body::before {
 
 /* --- style.css 底部最终修正方案 --- */
 
-/* --- 彻底恢复到你最原始、最满意的状态 --- */
-
+/* --- style.css 最后面 --- */
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    z-index: 1000;
-    background: transparent; /* 初始完全透明 */
-    /* 恢复到你最习惯的 0.5s 简单过渡 */
-    transition: background 0.8s ease, backdrop-filter 0.8s ease;
+    /* 1. ✅ 明确告诉它：平时是空气 */
+    background: transparent; 
+    
+    /* 2. ✅ 变色过程建议 0.5s 到 0.8s，1.5s 确实有点太久了 */
+    transition: background-color 0.8s ease; 
 }
 
 .navbar.scrolled {
-    /* 恢复到你最初的 0.85 浓度，这个浓度下和胶囊栏最统一 */
+    /* 这里的 rgba 和你的胶囊条已经完全一致了，保持不动 */
     background: rgba(5, 5, 5, 0.85) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: none;
-    box-shadow: none;
 }
