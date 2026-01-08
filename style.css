@@ -227,24 +227,28 @@ body::before {
 /* --- style.css 底部最终修正方案 --- */
 
 /* --- style.css 最后面 --- */
+/* --- 彻底解决：下滑慢变黑，回顶秒透明 --- */
+
 .navbar {
-    position: fixed; /* 【关键】锁死在屏幕最顶端 */
+    position: fixed;
     top: 0; left: 0; width: 100%; height: 60px;
-    
-    /* 【关键】纯黑背景，不透明！这样内容滑上去会被它完美遮住，不乱码 */
-    
-    z-index: 1000; /* 层级最高，压住一切 */
-     /* ✅ 确保这里是完全透明 */
-    background: rgba(5, 5, 5, 0) !important; 
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
+    z-index: 1000;
+    background: rgba(5, 5, 5, 0) !important; /* 初始全透明 */
+    backdrop-filter: blur(0px) !important;
+    -webkit-backdrop-filter: blur(0px) !important;
 
-    /* ✅ 渐变过渡动画，0.5秒左右最舒服 */
-    transition: background-color 2.5s ease, backdrop-filter 0.5s ease;
+    /* ✅ 重点：这里的时间决定了“回到顶部”的速度 */
+    /* 设为 0.1s 或 0s，实现瞬间变透明 */
+    transition: background-color 0.1s ease, backdrop-filter 0.1s ease;
 }
+
 .navbar.scrolled {
-    /* 这里的 rgba 和你的胶囊条已经完全一致了，保持不动 */
+    /* 恢复到你最满意的 0.85 浓度 */
     background: rgba(5, 5, 5, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+
+    /* ✅ 重点：这里的时间决定了“下滑变黑”的速度 */
+    /* 设为 1.5s，实现你想要的慢慢变黑效果 */
+    transition: background-color 1.5s ease, backdrop-filter 1.5s ease;
 }
-
-
