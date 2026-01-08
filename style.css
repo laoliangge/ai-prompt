@@ -267,7 +267,7 @@ body::before {
     height: 28px;
     
     /* ⚡️ 保持你满意的间距 */
-    margin-left: 25px !important; 
+    margin-left: 20px !important; 
     
     /* 1. 初始状态（刚打开网页时的样子）：半透明细线 */
     background: rgba(255, 255, 255, 0.05); 
@@ -309,3 +309,4 @@ body::before {
 @media (max-width: 768px) {
     .music-btn { width: 26px; height: 26px; }
 }
+
