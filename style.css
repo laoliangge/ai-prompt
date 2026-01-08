@@ -98,36 +98,21 @@ body::before {
 
 /* --- 4. 吸顶分类条 (方案A核心) --- */
 .sticky-category-bar {
-    position: sticky;
-    top: 59px; /* ✅ 关键：从 60 改成 59，物理上压住那根缝隙 */
-    z-index: 900;
-    
-    background: rgba(5, 5, 5, 0.9); 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    
-    border-top: none; /* 必须保持没有顶边框 */
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-/* 5. ✅ 新增这个：让背景向上延伸，盖住顶栏区域 */
-.sticky-category-bar {
     position: -webkit-sticky;
     position: sticky;
-    top: 60px; /* 严丝合缝回到 60px */
+    top: 60px;
     z-index: 900;
+    /* 这里的颜色和 navbar.scrolled 必须绝对死磕一致 */
+    background: rgba(5, 5, 5, 0.85); 
     padding: 5px 0;
     margin-bottom: 20px;
-    
-    /* 颜色对齐 0.9 */
-    background: rgba(5, 5, 5, 0.9); 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-top: none;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* ⚠️ 请检查：务必删掉之前让你加的 .sticky-category-bar::before 这一段 */
 
 .category-scroll {
     display: flex; overflow-x: auto; gap: 10px; padding: 0 20px;
@@ -239,20 +224,26 @@ body::before {
 }
 
 /* --- style.css 底部最终修正方案 --- */
-/* --- style.css 底部最终大招：贝塞尔节奏版 --- */
+
+/* --- 彻底恢复到你最原始、最满意的状态 --- */
+
 .navbar {
-    position: fixed; 
-    top: 0; left: 0; width: 100%; height: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
     z-index: 1000;
-    background: transparent; /* 平时完全透明 */
-    transition: background-color 0.8s ease, backdrop-filter 0.8s ease;
+    background: transparent; /* 初始完全透明 */
+    /* 恢复到你最习惯的 0.5s 简单过渡 */
+    transition: background 0.8s ease, backdrop-filter 0.8s ease;
 }
 
 .navbar.scrolled {
-    /* 这里的 0.9 和 8px 是咱们之前磨出来的较好参数 */
-    background: rgba(5, 5, 5, 0.9); 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    /* 恢复到你最初的 0.85 浓度，这个浓度下和胶囊栏最统一 */
+    background: rgba(5, 5, 5, 0.85) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-bottom: none;
     box-shadow: none;
 }
