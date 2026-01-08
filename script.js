@@ -1,29 +1,21 @@
-/* --- 全局变量 --- */
+// 全局变量
 let allData = [];
 let autoScrollTimer = null;
 let isPaused = false;
-// 音乐相关变量
-const bgm = document.getElementById('bgm');
-const musicBtn = document.getElementById('musicBtn');
-let isMusicPlayed = false;
 
-/* --- 初始化逻辑 --- */
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 获取数据并渲染
     fetch('data.json')
         .then(res => res.json())
         .then(data => {
             allData = data; 
             initGallery(); // 渲染画廊
-            startAutoScroll(); // 启动自动缓慢滚动
-            setupInteraction(); // 启动触摸暂停
-            setupNavbarScroll(); // ✅ 启动顶栏变色 + 滚动播放监听
-            addAutoPlayListeners(); // ✅ 启动触摸播放监听
+            startAutoScroll();
+            setupInteraction();
+            setupNavbarScroll(); // 启动导航栏变色监听
         })
         .catch(err => console.error('Error:', err));
 });
 
-/* --- 画廊核心功能 (保持不动) --- */
 function initGallery() {
     const container = document.getElementById('columns-container');
     if (!container) return; 
@@ -99,15 +91,13 @@ function setupInteraction() {
     });
 }
 
-/* --- 弹窗逻辑 (保持不动) --- */
 function openModal(item) {
     const modal = document.getElementById('modal');
     document.getElementById('modalImage').src = item.imageUrl;
     document.getElementById('modalTitle').innerText = item.title;
-    // 如果 HTML 里没有这些 ID 可能会报错，加个判断更稳，但为了不改你逻辑我保留原样
-    if(document.getElementById('modalCategory')) document.getElementById('modalCategory').innerText = item.category;
-    if(document.getElementById('modalPrompt')) document.getElementById('modalPrompt').innerText = item.prompt;
-    if(document.getElementById('modalId')) document.getElementById('modalId').innerText = 'ID ' + item.id;
+    document.getElementById('modalCategory').innerText = item.category;
+    document.getElementById('modalPrompt').innerText = item.prompt;
+    document.getElementById('modalId').innerText = 'ID ' + item.id;
     
     modal.style.display = 'flex';
     requestAnimationFrame(() => modal.classList.add('show'));
@@ -146,99 +136,73 @@ window.addEventListener('resize', () => {
     resizeTimer = setTimeout(initGallery, 300);
 });
 
-/* =========================================
-   🚀 核心修复区：顶栏变色 + 音乐控制
-   ========================================= */
+/* --- 🎵 最终版：智能导航 + 缓存修复 --- */
+var bgm = document.getElementById('bgm');
+var musicBtn = document.getElementById('musicBtn');
+var isMusicPlayed = false; 
 
-// 1. ✅ 修复顶栏变色 (监听 gallery-wrapper 而不是 window)
-function setupNavbarScroll() {
-    const navbar = document.querySelector('.navbar');
-    const scroller = document.getElementById('gallery-wrapper');
-    
-    if (!navbar || !scroller) return;
-
-    scroller.addEventListener('scroll', () => {
-        // --- 视觉：变黑 ---
-        if (scroller.scrollTop > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-
-        // --- 听觉：一滑就响 ---
-        // 只要发生了滚动，且还没播放过，就尝试播放
-        if (!isMusicPlayed) {
-            attemptPlayMusic();
-        }
-    });
-}
-
-// 2. 尝试自动播放音乐
-function attemptPlayMusic() {
-    if (!bgm || isMusicPlayed) return;
-
-    bgm.play().then(() => {
-        // 播放成功
-        if(musicBtn) musicBtn.classList.add('playing');
-        isMusicPlayed = true;
-        // 移除监听器省电
-        removeAutoPlayListeners();
-    }).catch(e => {
-        // 失败（被拦截），不管它，下次交互再试
-    });
-}
-
-// 3. 手动开关音乐
+// 1. 核心开关：控制播放/暂停
 function toggleMusic() {
-    if (!bgm) return;
+    if (!bgm) return; // 防止页面没音乐报错
     
     if (bgm.paused) {
         bgm.play().then(() => {
-            if(musicBtn) musicBtn.classList.add('playing');
-            isMusicPlayed = true;
-        });
+            musicBtn.classList.add('playing');
+        }).catch(e => console.log("播放被拦截"));
     } else {
         bgm.pause();
-        if(musicBtn) musicBtn.classList.remove('playing');
-        // 暂停后允许下次触摸自动播放
-        isMusicPlayed = false; 
-        addAutoPlayListeners();
+        musicBtn.classList.remove('playing');
     }
 }
 
-// 4. 添加触摸监听 (手指一碰就响)
-function addAutoPlayListeners() {
-    document.addEventListener('touchstart', attemptPlayMusic, { passive: true });
-    document.addEventListener('click', attemptPlayMusic);
+// 2. 智能自动播放
+function tryAutoPlay() {
+    if (isMusicPlayed || !bgm) return; 
+    bgm.play().then(() => {
+        musicBtn.classList.add('playing');
+        isMusicPlayed = true;
+        // 成功后移除监听
+        document.removeEventListener('click', tryAutoPlay);
+        document.removeEventListener('touchstart', tryAutoPlay);
+        document.removeEventListener('scroll', tryAutoPlay);
+    }).catch(e => {});
 }
 
-// 5. 移除监听
-function removeAutoPlayListeners() {
-    document.removeEventListener('touchstart', attemptPlayMusic);
-    document.removeEventListener('click', attemptPlayMusic);
-}
-
-// 6. 拦截“方案”点击 (在首页时不刷新)
+// 3. 【新功能】监听所有链接点击
 document.addEventListener('click', function(e) {
-    const target = e.target.closest('a');
+    // 找到被点击的链接
+    var target = e.target.closest('a');
+    
+    // 如果点的是“方案”链接（href="index.html"）
     if (target && target.getAttribute('href') === 'index.html') {
-        const path = window.location.pathname;
-        if (path.endsWith('/') || path.endsWith('index.html')) {
-            e.preventDefault(); // 拦截刷新
-            // console.log("已在首页，不刷新");
+        // 检查当前是不是已经在首页了
+        if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html')) {
+            e.preventDefault(); // 阻止刷新！
+            console.log("已在首页，拦截刷新，只切歌");
+            // 你也可以在这里加一句 toggleMusic() 如果你想点文字也开关音乐
+        }
+    }
+    
+    // 剩下的情况（比如去 admin.html）浏览器会自动处理，不用管
+});
+
+// 4. 【新功能】回魂补丁 (修复按返回键图标空转)
+window.addEventListener('pageshow', function(e) {
+    // 每次页面显示（包括按返回键回来）都执行
+    if (bgm) {
+        if (bgm.paused) {
+            // 如果声音停了，把转圈也停了，实事求是
+            musicBtn.classList.remove('playing');
+        } else {
+            // 如果声音还在响（极少见），确保在转
+            musicBtn.classList.add('playing');
         }
     }
 });
 
-// 7. 页面回魂检测 (按返回键回来时恢复状态)
-window.addEventListener('pageshow', function(e) {
-    if (!bgm) return;
-    if (bgm.paused) {
-        if(musicBtn) musicBtn.classList.remove('playing');
-        isMusicPlayed = false;
-        addAutoPlayListeners(); // 重新挂载监听，确保还能滑响
-    } else {
-        if(musicBtn) musicBtn.classList.add('playing');
-        isMusicPlayed = true;
-    }
-});
+// 启动监听
+document.addEventListener('click', tryAutoPlay);
+document.addEventListener('touchstart', tryAutoPlay);
+document.addEventListener('scroll', tryAutoPlay);
+
+
