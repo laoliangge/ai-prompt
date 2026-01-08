@@ -254,22 +254,22 @@ body::before {
 }
 
 /* --- 🎵 放在 style.css 最后面：音乐按钮样式 --- */
-/* --- 🎵 放在 style.css 最后面：通透发光版 --- */
+/* --- 🎵 放在 style.css 最后面：基于你提供的原版修改 --- */
 .music-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     vertical-align: middle;
     
-    /* 大小和间距 */
+    /* 大小 */
     width: 28px; 
     height: 28px;
     
-    /* ✅ 这里加了 !important 强制把间距拉开，解决刚才不移动的问题 */
+    /* ✅ 还是强制锁死 25px，保持刚才调好的完美间距 */
     margin-left: 25px !important; 
     
-    /* 颜值设置：平时是低调的暗金色 */
-    background: transparent; 
+    /* 颜值设置：保持你原版的半透明背景和金圈 */
+    background: rgba(255, 255, 255, 0.05); 
     border: 1px solid rgba(212, 175, 55, 0.4); 
     color: var(--accent); 
     border-radius: 50%; 
@@ -278,32 +278,48 @@ body::before {
     transition: all 0.3s ease;
 }
 
-/* ❌ 删掉了 hover 变成实心的代码，防止手机误触变黄 */
+/* ✋ 触摸/鼠标放上去的效果（已修复） */
 .music-btn:hover {
+    /* ❌ 删掉了 background: var(--accent) -> 坚决不变全黄！ */
+    background: transparent; 
+    
+    /* ❌ 删掉了 color: #000 -> 音符保持金色 */
+    color: var(--accent); 
+    
+    /* 只让边框稍微亮一点，表示选中 */
     border-color: var(--accent);
-    box-shadow: 0 0 5px rgba(212, 175, 55, 0.5); /* 微微发光 */
-    color: var(--accent);
-    background: transparent; /* 保持透明 */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
-/* 🔄 播放时的特效：只转圈 + 发光，不要实心 */
+/* icon 大小微调 (保留你原代码) */
+.music-btn .icon {
+    font-size: 14px;
+    margin-top: 1px; 
+}
+
+/* 🔄 播放时的特效 (完全保留你原代码的设定) */
 .music-btn.playing {
-    /* 1. 关键：背景保持透明，不要变黄！ */
+    /* ✅ 强制背景透明，防止手机上误触变色 */
     background: transparent !important; 
     
-    /* 2. 边框和图标高亮 */
-    border-color: var(--accent) !important;
-    color: var(--accent) !important;
+    /* 你原代码里写的是变白(#fff)，我给你留着，还原你的原意 */
+    border-color: #fff; 
     
-    /* 3. 霓虹灯光晕：让它看起来“亮”了 */
-    box-shadow: 0 0 15px var(--accent), inset 0 0 5px var(--accent);
-    
-    /* 4. 旋转动画 */
-    animation: disk-spin 4s linear infinite;
+    animation: disk-spin 4s linear infinite; 
+    box-shadow: 0 0 8px var(--accent); 
 }
 
 /* 定义旋转动画 */
 @keyframes disk-spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/* 📱 手机适配：稍微缩小一点 */
+@media (max-width: 768px) {
+    .music-btn { 
+        width: 26px; 
+        height: 26px;
+        /* 这里就不改margin了，让上面的 !important 生效，保证对齐 */
+    }
 }
