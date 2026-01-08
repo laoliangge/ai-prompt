@@ -98,21 +98,22 @@ body::before {
 
 /* --- 4. 吸顶分类条 (方案A核心) --- */
 .sticky-category-bar {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 60px;
+    position: -webkit-sticky; 
+    position: sticky;         
+    
+    /* 【关键】吸顶位置设为 60px！ */
+    /* 因为导航栏占了前 60px，它必须乖乖排在导航栏下面，不能重叠 */
+    top: 60px;                   
+    
     z-index: 900;
-    /* 这里的颜色和 navbar.scrolled 必须绝对死磕一致 */
-    background: rgba(5, 5, 5, 0.85); 
-    padding: 5px 0;
+    padding: 05px 0; /* 稍微扁一点，更精致 */
     margin-bottom: 20px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    
+    /* 背景用纯黑+微透，保证文字滑过它时也看不见 */
+    background: rgba(5, 5, 5, 0.85); 
+    /* 删掉磨砂，用纯色更稳 */
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-
-/* ⚠️ 请检查：务必删掉之前让你加的 .sticky-category-bar::before 这一段 */
 
 .category-scroll {
     display: flex; overflow-x: auto; gap: 10px; padding: 0 20px;
@@ -227,14 +228,22 @@ body::before {
 
 /* --- style.css 最后面 --- */
 .navbar {
-    /* 1. ✅ 明确告诉它：平时是空气 */
-    background: transparent; 
+    position: fixed; /* 【关键】锁死在屏幕最顶端 */
+    top: 0; left: 0; width: 100%; height: 60px;
     
-    /* 2. ✅ 变色过程建议 0.5s 到 0.8s，1.5s 确实有点太久了 */
-    transition: background-color 0.8s ease; 
-}
+    /* 【关键】纯黑背景，不透明！这样内容滑上去会被它完美遮住，不乱码 */
+    
+    z-index: 1000; /* 层级最高，压住一切 */
+     /* ✅ 确保这里是完全透明 */
+    background: rgba(5, 5, 5, 0) !important; 
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
 
+    /* ✅ 渐变过渡动画，0.5秒左右最舒服 */
+    transition: background-color 2.5s ease, backdrop-filter 0.5s ease;
+}
 .navbar.scrolled {
     /* 这里的 rgba 和你的胶囊条已经完全一致了，保持不动 */
     background: rgba(5, 5, 5, 0.85) !important;
 }
+
