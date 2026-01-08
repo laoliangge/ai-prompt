@@ -255,6 +255,7 @@ body::before {
 
 /* --- 🎵 放在 style.css 最后面：音乐按钮样式 --- */
 /* --- 🎵 放在 style.css 最后面：基于你提供的原版修改 --- */
+/* --- 🎵 放在 style.css 最最最后面 --- */
 .music-btn {
     display: inline-flex;
     align-items: center;
@@ -265,10 +266,10 @@ body::before {
     width: 28px; 
     height: 28px;
     
-    /* ✅ 还是强制锁死 25px，保持刚才调好的完美间距 */
-    margin-left: 20px !important; 
+    /* ⚡️ 保持你满意的间距 */
+    margin-left: 25px !important; 
     
-    /* 颜值设置：保持你原版的半透明背景和金圈 */
+    /* 1. 初始状态（刚打开网页时的样子）：半透明细线 */
     background: rgba(255, 255, 255, 0.05); 
     border: 1px solid rgba(212, 175, 55, 0.4); 
     color: var(--accent); 
@@ -278,49 +279,33 @@ body::before {
     transition: all 0.3s ease;
 }
 
-/* ✋ 触摸/鼠标放上去的效果（已修复） */
-.music-btn:hover {
-    /* ❌ 删掉了 background: var(--accent) -> 坚决不变全黄！ */
-    background: transparent; 
-    
-    /* ❌ 删掉了 color: #000 -> 音符保持金色 */
-    color: var(--accent); 
-    
-    /* 只让边框稍微亮一点，表示选中 */
-    border-color: var(--accent);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+/* 2. 只有电脑上才有触摸变亮效果，手机上完全禁用！防止点完变粗 */
+@media (hover: hover) {
+    .music-btn:hover {
+        border-color: var(--accent); /* 电脑鼠标放上去变亮 */
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    }
 }
 
-/* icon 大小微调 (保留你原代码) */
-.music-btn .icon {
-    font-size: 14px;
-    margin-top: 1px; 
-}
-
-/* 🔄 播放时的特效 (完全保留你原代码的设定) */
+/* 3. 播放时的特效：转圈 + 变白亮 */
 .music-btn.playing {
-    /* ✅ 强制背景透明，防止手机上误触变色 */
     background: transparent !important; 
     
-    /* 你原代码里写的是变白(#fff)，我给你留着，还原你的原意 */
-    border-color: #fff; 
+    /* 播放时线条变白一点，显眼 */
+    border-color: #fff !important; 
     
+    /* 转圈 */
     animation: disk-spin 4s linear infinite; 
     box-shadow: 0 0 8px var(--accent); 
 }
 
-/* 定义旋转动画 */
+/* 旋转动画 */
 @keyframes disk-spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-/* 📱 手机适配：稍微缩小一点 */
+/* 手机适配 */
 @media (max-width: 768px) {
-    .music-btn { 
-        width: 26px; 
-        height: 26px;
-        /* 这里就不改margin了，让上面的 !important 生效，保证对齐 */
-    }
+    .music-btn { width: 26px; height: 26px; }
 }
-
