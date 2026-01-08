@@ -155,6 +155,56 @@ scrollContainer.addEventListener('scroll', () => {
 });
 
 
+/* --- 🎵 放在 script.js 最后面：音乐控制逻辑 --- */
+
+// 1. 获取元素
+var bgm = document.getElementById('bgm');
+var musicBtn = document.getElementById('musicBtn');
+var isMusicPlayed = false; 
+
+// 2. 按钮点击功能：开关音乐
+function toggleMusic() {
+    if (bgm.paused) {
+        bgm.play();
+        musicBtn.classList.add('playing');
+    } else {
+        bgm.pause();
+        musicBtn.classList.remove('playing');
+    }
+}
+
+// 3. 智能自动播放 (用户第一次交互时触发)
+function autoPlayMusic() {
+    // 如果还没播放过，就尝试播放
+    if (!isMusicPlayed) {
+        bgm.volume = 0.5; // 音量 50%，别太吵
+        
+        // 尝试播放
+        var playPromise = bgm.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                // 播放成功！
+                musicBtn.classList.add('playing');
+                isMusicPlayed = true;
+                // 成功后，移除监听，以后就不打扰了
+                document.removeEventListener('click', autoPlayMusic);
+                document.removeEventListener('touchstart', autoPlayMusic);
+                document.removeEventListener('scroll', autoPlayMusic);
+            }).catch(error => {
+                // 浏览器阻止了，没事，等待下一次点击
+                console.log("等待用户交互来播放音乐");
+            });
+        }
+    }
+}
+
+// 监听用户的点击、触摸、滚动，一旦发生就尝试播放
+document.addEventListener('click', autoPlayMusic);
+document.addEventListener('touchstart', autoPlayMusic);
+document.addEventListener('scroll', autoPlayMusic);
+
+
 
 
 
