@@ -110,7 +110,7 @@ body::before {
     margin-bottom: 20px;
     
     /* 背景用纯黑+微透，保证文字滑过它时也看不见 */
-    background: rgba(5, 5, 5, 0.85); 
+    background: rgba(5, 5, 5, 0.95); 
     /* 删掉磨砂，用纯色更稳 */
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
@@ -244,6 +244,7 @@ body::before {
 }
 .navbar.scrolled {
     /* 这里的 rgba 和你的胶囊条已经完全一致了，保持不动 */
-    background: rgba(5, 5, 5, 0.85) !important;
+    background: rgba(5, 5, 5, 0.95) !important;
 }
+
 
