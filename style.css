@@ -99,15 +99,14 @@ body::before {
 /* --- 4. 吸顶分类条 (方案A核心) --- */
 .sticky-category-bar {
     position: sticky;
-    top: 60px;
+    top: 59px; /* ✅ 关键：从 60 改成 59，物理上压住那根缝隙 */
     z-index: 900;
     
-    /* 4. ✅ 统一背景色和磨砂 */
     background: rgba(5, 5, 5, 0.9); 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     
-    border-top: none;
+    border-top: none; /* 必须保持没有顶边框 */
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -249,16 +248,11 @@ body::before {
 }
 
 .navbar.scrolled {
-    /* 3. ✅ 依然用你的 0.9 浓度 */
     background: rgba(5, 5, 5, 0.9) !important; 
+    /* ✅ 确保滚动后这里也有磨砂，且数值和胶囊栏完全一样 */
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
     
-    /* 4. ✅ 磨砂稍微收敛到 8px，防止发白吞掉背景色 */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    
-    /* 5. ✅ 加一个极淡的投影，它也会随曲线浮现，增加变色的“厚度感” */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border-bottom: none !important; /* 绝对不能有下边框 */
+    box-shadow: none !important;    /* 绝对不能有阴影 */
 }
-
-
-
