@@ -226,24 +226,27 @@ body::before {
 }
 
 /* --- style.css 底部最终修正方案 --- */
-/* --- style.css 底部最终修正方案 --- */
+/* --- style.css 底部最终大招：贝塞尔节奏版 --- */
 .navbar {
-    /* 1. ✅ 起点设为 rgba 里的全透明 0 */
+    /* 1. ✅ 初始状态设为全透明 */
     background: rgba(5, 5, 5, 0); 
     
-    /* 2. ✅ 重点：把 transition 时间缩短到 0.8s，
-       并明确告诉浏览器要渐变的是 background-color 和 backdrop-filter */
-    transition: background-color 0.8s ease, backdrop-filter 0.8s ease;
+    /* 2. ✅ 核心修改：使用 cubic-bezier 曲线 */
+    /* 0.8s 到 1.0s 配合这个曲线，肉眼感知最明显 */
+    transition: all 1.0s cubic-bezier(0.22, 1, 0.36, 1); 
     
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
 }
 
 .navbar.scrolled {
-    /* 3. ✅ 既然你的环境必须用 !important，那咱们在这里加上 */
+    /* 3. ✅ 依然用你的 0.9 浓度 */
     background: rgba(5, 5, 5, 0.9) !important; 
     
-    /* 4. ✅ 磨砂从 8px 开始渐变，增加质感 */
+    /* 4. ✅ 磨砂稍微收敛到 8px，防止发白吞掉背景色 */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    
+    /* 5. ✅ 加一个极淡的投影，它也会随曲线浮现，增加变色的“厚度感” */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
