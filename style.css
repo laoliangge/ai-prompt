@@ -225,24 +225,24 @@ body::before {
     .close-btn-invisible { top: 10px; right: 10px; background: rgba(0,0,0,0.5); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 }
 
-
+/* --- style.css 底部最终修正方案 --- */
 .navbar {
-    /* ✅ 明确初始状态：RGBA 里的最后一位必须是 0 */
+    /* 1. ✅ 起点设为 rgba 里的全透明 0 */
     background: rgba(5, 5, 5, 0); 
     
-    /* 渐变时间缩短到 0.8s，让反应更灵敏 */
-    transition: all 1.5s ease; 
-}
-.navbar.scrolled {
-    /* 1. ✅ 既然 0.9 还是不明显，咱们直接上 0.95 (接近实黑) */
-    background: rgba(5, 5, 5, 0.90) !important; 
+    /* 2. ✅ 重点：把 transition 时间缩短到 0.8s，
+       并明确告诉浏览器要渐变的是 background-color 和 backdrop-filter */
+    transition: background-color 0.8s ease, backdrop-filter 0.8s ease;
     
-    /* 2. ✅ 重点：把磨砂从 15px 降到 8px！ */
-    /* 磨砂小了，透过的亮斑就少了，你的 0.95 黑色背景才能显出来 */
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+}
+
+.navbar.scrolled {
+    /* 3. ✅ 既然你的环境必须用 !important，那咱们在这里加上 */
+    background: rgba(5, 5, 5, 0.9) !important; 
+    
+    /* 4. ✅ 磨砂从 8px 开始渐变，增加质感 */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
-
-
-
-
