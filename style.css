@@ -99,21 +99,25 @@ body::before {
 
 /* --- 4. 吸顶分类条 (方案A核心) --- */
 .sticky-category-bar {
-    position: -webkit-sticky; 
-    position: sticky;         
-    
-    /* 【关键】吸顶位置设为 60px！ */
-    /* 因为导航栏占了前 60px，它必须乖乖排在导航栏下面，不能重叠 */
-    top: 60px;                   
-    
+    position: -webkit-sticky;
+    position: sticky;
+    top: 60px; /* 严丝合缝顶住导航栏 */
     z-index: 900;
-    padding: 05px 0; /* 稍微扁一点，更精致 */
+    padding: 5px 0;
     margin-bottom: 20px;
+
+    /* ✅ 1. 颜色浓度必须和顶栏一致：0.9 */
+    background: rgba(5, 5, 5, 0.9); 
     
-    /* 背景用纯黑+微透，保证文字滑过它时也看不见 */
-    background: rgba(5, 5, 5, 0.85); 
-    /* 删掉磨砂，用纯色更稳 */
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    /* ✅ 2. 磨砂度也调到 8px，保持一致的通透感 */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    /* ✅ 3. 掐死顶部的任何缝隙线 */
+    border-top: none; 
+
+    /* ✅ 4. 只留底部这一条若隐若现的线，作为分类和图片的分割 */
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
 }
 
 .category-scroll {
@@ -250,3 +254,4 @@ body::before {
     /* 5. ✅ 加一个极淡的投影，它也会随曲线浮现，增加变色的“厚度感” */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
+
