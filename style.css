@@ -48,7 +48,7 @@ body::before {
 .nav-content {
     max-width: 1400px; margin: 0 auto; height: 100%;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 24px;
 }
 .logo { display: flex; align-items: center; gap: 8px; }
 .logo-text { 
@@ -57,7 +57,7 @@ body::before {
 }
 .nav-links a { 
     color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; 
-    margin-left: 20px; letter-spacing: 1px; font-weight: 500; transition: color 0.3s;
+    margin-left: 16px; letter-spacing: 1px; font-weight: 500; transition: color 0.3s;
 }
 .nav-links a.active { color: var(--accent); }
 
@@ -263,7 +263,7 @@ body::before {
     /* 大小和间距 */
     width: 28px; 
     height: 28px;
-    margin-left: 15px; /* 离左边的文字远一点 */
+    margin-left: 10px; /* 离左边的文字远一点 */
     
     /* 颜值设置 */
     background: rgba(255, 255, 255, 0.05); /* 极淡的背景 */
@@ -306,3 +306,4 @@ body::before {
 @media (max-width: 768px) {
     .music-btn { margin-left: 10px; width: 26px; height: 26px; }
 }
+
