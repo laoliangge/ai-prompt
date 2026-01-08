@@ -107,7 +107,7 @@ body::before {
     margin-bottom: 20px;
 
     /* ✅ 1. 颜色浓度必须和顶栏一致：0.9 */
-    background: rgba(5, 5, 5, 0.9); 
+    background: rgba(5, 5, 5, 0.8); 
     
     /* ✅ 2. 磨砂度也调到 8px，保持一致的通透感 */
     backdrop-filter: blur(8px);
@@ -254,4 +254,5 @@ body::before {
     /* 5. ✅ 加一个极淡的投影，它也会随曲线浮现，增加变色的“厚度感” */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
+
 
