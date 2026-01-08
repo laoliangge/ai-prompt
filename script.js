@@ -90,6 +90,25 @@ function setupInteraction() {
         pauseTimeout = setTimeout(() => { isPaused = false; }, 1000);
     });
 }
+/* --- 放在第 92 行的大括号后面，作为第 93 行开始 --- */
+
+function setupNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    const scroller = document.getElementById('gallery-wrapper');
+    
+    // 安全检查
+    if (!navbar || !scroller) return;
+
+    scroller.addEventListener('scroll', () => {
+        // 你的自定义参数：滚过 20px 就变色
+        if (scroller.scrollTop > 20) { 
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+}
+
 
 function openModal(item) {
     const modal = document.getElementById('modal');
@@ -206,22 +225,4 @@ document.addEventListener('touchstart', tryAutoPlay);
 document.addEventListener('scroll', tryAutoPlay);
 
 
-/* --- 补全丢失的导航栏监听函数 --- */
-function setupNavbarScroll() {
-    const navbar = document.querySelector('.navbar');
-    // 注意：你的滚动是在 gallery-wrapper 里，不是 window
-    const scroller = document.getElementById('gallery-wrapper'); 
-    
-    if (!navbar || !scroller) return;
-
-    scroller.addEventListener('scroll', () => {
-        // ✅ 就是这个 IF 参数！
-        // 我给你设成了 10 (你可以理解为 0)，只要有一点点滚动，立马变黑
-        if (scroller.scrollTop > 25) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
-}
 
