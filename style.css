@@ -226,18 +226,27 @@ body::before {
 }
 
 
-/* --- style.css 最后面 --- */
+
+/* --- 修改后的 style.css 底部 --- */
 .navbar {
-    /* 1. ✅ 明确告诉它：平时是空气 */
-    background: transparent; 
+    /* 1. ✅ 明确初始颜色和透明度 (rgba 的最后一位是 0) */
+    background: rgba(5, 5, 5, 0); 
     
-    /* 2. ✅ 变色过程建议 0.5s 到 0.8s，1.5s 确实有点太久了 */
-    transition: background-color 0.8s ease; 
+    /* 2. ✅ 把 background-color 改成 all */
+    /* 这样背景色、阴影、磨砂度都会一起同步渐变，不会打架 */
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
 }
 
 .navbar.scrolled {
-    /* 这里的 rgba 和你的胶囊条已经完全一致了，保持不动 */
-    background: rgba(5, 5, 5, 0.85) !important;
+    /* 3. ✅ 去掉 !important，给渐变留出呼吸空间 */
+    background: rgba(5, 5, 5, 0.85); 
+    
+    /* 4. ✅ 让磨砂也跟着渐变，这样整体感最强 */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 
 
