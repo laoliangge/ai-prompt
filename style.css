@@ -225,22 +225,21 @@ body::before {
     .close-btn-invisible { top: 10px; right: 10px; background: rgba(0,0,0,0.5); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 }
 
-/* style.css 底部 */
+
 .navbar {
-    /* 1. ✅ 明确初始状态：RGBA 里的 0 就是全透明 */
+    /* ✅ 明确初始状态：RGBA 里的最后一位必须是 0 */
     background: rgba(5, 5, 5, 0); 
     
-    /* 2. ✅ 把 background-color 改成 all，让颜色和磨砂同步渐变 */
+    /* 渐变时间缩短到 0.8s，让反应更灵敏 */
     transition: all 0.8s ease; 
 }
 .navbar.scrolled {
-    /* 3. ✅ 既然 0.9 没效果，咱们直接上 0.95，并且删掉 !important 试试 */
-    background: rgba(5, 5, 5, 0.95); 
+    /* 1. ✅ 既然 0.9 还是不明显，咱们直接上 0.95 (接近实黑) */
+    background: rgba(5, 5, 5, 0.95) !important; 
     
-    /* 4. ✅ 关键：把磨砂从 15px 降到 8px，这样颜色才不会被白雾吞掉 */
+    /* 2. ✅ 重点：把磨砂从 15px 降到 8px！ */
+    /* 磨砂小了，透过的亮斑就少了，你的 0.95 黑色背景才能显出来 */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    
-    border-bottom: none;
 }
 
