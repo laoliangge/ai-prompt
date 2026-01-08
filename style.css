@@ -43,7 +43,7 @@ body::before {
     -webkit-backdrop-filter: blur(0px);
 
     /* ✅ 渐变过渡动画，0.5秒左右最舒服 */
-    transition: background-color 1.5s ease, backdrop-filter 0.5s ease;
+    transition: background-color 2.5s ease, backdrop-filter 0.5s ease;
 }
 
 .nav-content {
@@ -236,6 +236,7 @@ body::before {
     background: rgba(5, 5, 5, 0.85) !important;
     
 }
+
 
 
 
