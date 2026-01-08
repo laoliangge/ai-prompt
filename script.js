@@ -155,56 +155,71 @@ scrollContainer.addEventListener('scroll', () => {
 });
 
 
-/* --- 🎵 放在 script.js 最后面：音乐控制逻辑 --- */
-
-// 1. 获取元素
+/* --- 🎵 最终版：智能导航 + 缓存修复 --- */
 var bgm = document.getElementById('bgm');
 var musicBtn = document.getElementById('musicBtn');
 var isMusicPlayed = false; 
 
-// 2. 按钮点击功能：开关音乐
+// 1. 核心开关：控制播放/暂停
 function toggleMusic() {
+    if (!bgm) return; // 防止页面没音乐报错
+    
     if (bgm.paused) {
-        bgm.play();
-        musicBtn.classList.add('playing');
+        bgm.play().then(() => {
+            musicBtn.classList.add('playing');
+        }).catch(e => console.log("播放被拦截"));
     } else {
         bgm.pause();
         musicBtn.classList.remove('playing');
     }
 }
 
-// 3. 智能自动播放 (用户第一次交互时触发)
-function autoPlayMusic() {
-    // 如果还没播放过，就尝试播放
-    if (!isMusicPlayed) {
-        bgm.volume = 0.5; // 音量 50%，别太吵
-        
-        // 尝试播放
-        var playPromise = bgm.play();
-        
-        if (playPromise !== undefined) {
-            playPromise.then(_ => {
-                // 播放成功！
-                musicBtn.classList.add('playing');
-                isMusicPlayed = true;
-                // 成功后，移除监听，以后就不打扰了
-                document.removeEventListener('click', autoPlayMusic);
-                document.removeEventListener('touchstart', autoPlayMusic);
-                document.removeEventListener('scroll', autoPlayMusic);
-            }).catch(error => {
-                // 浏览器阻止了，没事，等待下一次点击
-                console.log("等待用户交互来播放音乐");
-            });
-        }
-    }
+// 2. 智能自动播放
+function tryAutoPlay() {
+    if (isMusicPlayed || !bgm) return; 
+    bgm.play().then(() => {
+        musicBtn.classList.add('playing');
+        isMusicPlayed = true;
+        // 成功后移除监听
+        document.removeEventListener('click', tryAutoPlay);
+        document.removeEventListener('touchstart', tryAutoPlay);
+        document.removeEventListener('scroll', tryAutoPlay);
+    }).catch(e => {});
 }
 
-// 监听用户的点击、触摸、滚动，一旦发生就尝试播放
-document.addEventListener('click', autoPlayMusic);
-document.addEventListener('touchstart', autoPlayMusic);
-document.addEventListener('scroll', autoPlayMusic);
+// 3. 【新功能】监听所有链接点击
+document.addEventListener('click', function(e) {
+    // 找到被点击的链接
+    var target = e.target.closest('a');
+    
+    // 如果点的是“方案”链接（href="index.html"）
+    if (target && target.getAttribute('href') === 'index.html') {
+        // 检查当前是不是已经在首页了
+        if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html')) {
+            e.preventDefault(); // 阻止刷新！
+            console.log("已在首页，拦截刷新，只切歌");
+            // 你也可以在这里加一句 toggleMusic() 如果你想点文字也开关音乐
+        }
+    }
+    
+    // 剩下的情况（比如去 admin.html）浏览器会自动处理，不用管
+});
 
+// 4. 【新功能】回魂补丁 (修复按返回键图标空转)
+window.addEventListener('pageshow', function(e) {
+    // 每次页面显示（包括按返回键回来）都执行
+    if (bgm) {
+        if (bgm.paused) {
+            // 如果声音停了，把转圈也停了，实事求是
+            musicBtn.classList.remove('playing');
+        } else {
+            // 如果声音还在响（极少见），确保在转
+            musicBtn.classList.add('playing');
+        }
+    }
+});
 
-
-
-
+// 启动监听
+document.addEventListener('click', tryAutoPlay);
+document.addEventListener('touchstart', tryAutoPlay);
+document.addEventListener('scroll', tryAutoPlay);
