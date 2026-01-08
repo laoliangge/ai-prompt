@@ -30,20 +30,19 @@ body::before {
 
 /* --- 1. 导航栏 (方案A：固定 + 纯黑背景) --- */
 .navbar {
-    position: fixed; /* 【关键】锁死在屏幕最顶端 */
+    position: fixed; 
     top: 0; left: 0; width: 100%; height: 60px;
+    z-index: 1000;
     
-    /* 【关键】纯黑背景，不透明！这样内容滑上去会被它完美遮住，不乱码 */
-    
-    
-    z-index: 1000; /* 层级最高，压住一切 */
-     /* ✅ 确保这里是完全透明 */
+    /* 1. ✅ 初始状态：完全透明 */
     background: rgba(5, 5, 5, 0) !important; 
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
+    
+    /* 2. ✅ 重点：删掉这里的 backdrop-filter！不要让它在这里磨砂 */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 
-    /* ✅ 渐变过渡动画，0.5秒左右最舒服 */
-    transition: background-color 2.5s ease, backdrop-filter 0.5s ease;
+    /* 3. ✅ 保持你的渐变动画 */
+    transition: background-color 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .nav-content {
@@ -99,25 +98,31 @@ body::before {
 
 /* --- 4. 吸顶分类条 (方案A核心) --- */
 .sticky-category-bar {
-    position: -webkit-sticky;
     position: sticky;
-    top: 60px; /* 严丝合缝顶住导航栏 */
+    top: 60px;
     z-index: 900;
-    padding: 5px 0;
-    margin-bottom: 20px;
-
-    /* ✅ 1. 颜色浓度必须和顶栏一致：0.9 */
-    background: rgba(5, 5, 5, 0.8); 
     
-    /* ✅ 2. 磨砂度也调到 8px，保持一致的通透感 */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    /* 4. ✅ 统一背景色和磨砂 */
+    background: rgba(5, 5, 5, 0.9); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    
+    border-top: none;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
 
-    /* ✅ 3. 掐死顶部的任何缝隙线 */
-    border-top: none; 
-
-    /* ✅ 4. 只留底部这一条若隐若现的线，作为分类和图片的分割 */
-    border-bottom: 1px solid rgba(255,255,255,0.05); 
+/* 5. ✅ 新增这个：让背景向上延伸，盖住顶栏区域 */
+.sticky-category-bar::before {
+    content: "";
+    position: absolute;
+    top: -60px; /* 向上延伸 60px */
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: inherit; /* 跟随父级的 0.9 黑色 */
+    backdrop-filter: inherit; /* 跟随父级的磨砂 */
+    -webkit-backdrop-filter: inherit;
+    z-index: -1;
 }
 
 .category-scroll {
@@ -254,5 +259,6 @@ body::before {
     /* 5. ✅ 加一个极淡的投影，它也会随曲线浮现，增加变色的“厚度感” */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
+
 
 
