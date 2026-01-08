@@ -232,7 +232,7 @@ body::before {
     
     /* 2. ✅ 重点：把 transition 时间缩短到 0.8s，
        并明确告诉浏览器要渐变的是 background-color 和 backdrop-filter */
-    transition: background-color 1.5s ease, backdrop-filter 0.8s ease;
+    transition: background-color 1.5s ease, backdrop-filter 1.5s ease;
     
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
@@ -246,4 +246,5 @@ body::before {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
+
 
