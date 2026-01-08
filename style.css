@@ -241,10 +241,11 @@ body::before {
 
 .navbar.scrolled {
     /* 3. ✅ 核心：把 0.85 加强到 0.95，让它变深，背景色就显出来了 */
-    background: rgba(5, 5, 5, 0.95) !important; 
+    background: rgba(5, 5, 5, 0.9); 
     
     /* 4. ✅ 磨砂稍微降一点点，让颜色透出来 */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
+
 
