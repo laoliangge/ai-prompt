@@ -147,10 +147,11 @@ const navbar = document.querySelector('.navbar');
 // 3. 监听容器的滚动 (注意：这里不再是 window 了)
 scrollContainer.addEventListener('scroll', () => {
     // 检查容器滚了多少距离 (scrollTop)
-    if (scrollContainer.scrollTop > 80) {
+    if (scrollContainer.scrollTop > 30) {
         navbar.classList.add('scrolled'); // 滚了：变黑
     } else {
         navbar.classList.remove('scrolled'); // 回顶：变透明
     }
 });
+
 
