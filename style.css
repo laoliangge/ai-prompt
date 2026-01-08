@@ -37,7 +37,7 @@ body::before {
     background: var(--bg-deep); 
     
     z-index: 1000; /* 层级最高，压住一切 */
-    border-bottom: 1px solid rgba(255,255,255,0.05); /* 微微一条底线，分界 */
+    
 }
 
 .nav-content {
@@ -230,5 +230,6 @@ body::before {
     background: rgba(5, 5, 5, 0.85) !important;
     
 }
+
 
 
