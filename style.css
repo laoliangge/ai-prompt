@@ -226,31 +226,25 @@ body::before {
 }
 
 
-
-/* --- 修改后的 style.css 底部 --- */
+/* --- 只改顶栏这一块 --- */
 .navbar {
-    /* 1. ✅ 明确初始颜色和透明度 (rgba 的最后一位是 0) */
+    /* 1. ✅ 初始状态：完全透明，啥也没有 */
     background: rgba(5, 5, 5, 0); 
     
-    /* 2. ✅ 把 background-color 改成 all */
-    /* 这样背景色、阴影、磨砂度都会一起同步渐变，不会打架 */
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    
+    /* 2. ✅ 重点：这里不要只写 background-color，写 all 确保颜色和磨砂一起变 */
+    /* 时间调到 0.8秒，呼吸感最强 */
+    transition: all 0.8s ease; 
+
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
 }
 
 .navbar.scrolled {
-    /* 3. ✅ 去掉 !important，给渐变留出呼吸空间 */
-    background: rgba(5, 5, 5, 0.85); 
+    /* 3. ✅ 核心：把 0.85 加强到 0.95，让它变深，背景色就显出来了 */
+    background: rgba(5, 5, 5, 0.95) !important; 
     
-    /* 4. ✅ 让磨砂也跟着渐变，这样整体感最强 */
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    /* 4. ✅ 磨砂稍微降一点点，让颜色透出来 */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
-
-
-
-
-
 
