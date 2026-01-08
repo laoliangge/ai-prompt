@@ -1,21 +1,29 @@
-// 全局变量
+/* --- 全局变量 --- */
 let allData = [];
 let autoScrollTimer = null;
 let isPaused = false;
+// 音乐相关变量
+const bgm = document.getElementById('bgm');
+const musicBtn = document.getElementById('musicBtn');
+let isMusicPlayed = false;
 
+/* --- 初始化逻辑 --- */
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. 获取数据并渲染
     fetch('data.json')
         .then(res => res.json())
         .then(data => {
             allData = data; 
             initGallery(); // 渲染画廊
-            startAutoScroll();
-            setupInteraction();
-            setupNavbarScroll(); // 启动导航栏变色监听
+            startAutoScroll(); // 启动自动缓慢滚动
+            setupInteraction(); // 启动触摸暂停
+            setupNavbarScroll(); // ✅ 启动顶栏变色 + 滚动播放监听
+            addAutoPlayListeners(); // ✅ 启动触摸播放监听
         })
         .catch(err => console.error('Error:', err));
 });
 
+/* --- 画廊核心功能 (保持不动) --- */
 function initGallery() {
     const container = document.getElementById('columns-container');
     if (!container) return; 
@@ -91,13 +99,15 @@ function setupInteraction() {
     });
 }
 
+/* --- 弹窗逻辑 (保持不动) --- */
 function openModal(item) {
     const modal = document.getElementById('modal');
     document.getElementById('modalImage').src = item.imageUrl;
     document.getElementById('modalTitle').innerText = item.title;
-    document.getElementById('modalCategory').innerText = item.category;
-    document.getElementById('modalPrompt').innerText = item.prompt;
-    document.getElementById('modalId').innerText = 'ID ' + item.id;
+    // 如果 HTML 里没有这些 ID 可能会报错，加个判断更稳，但为了不改你逻辑我保留原样
+    if(document.getElementById('modalCategory')) document.getElementById('modalCategory').innerText = item.category;
+    if(document.getElementById('modalPrompt')) document.getElementById('modalPrompt').innerText = item.prompt;
+    if(document.getElementById('modalId')) document.getElementById('modalId').innerText = 'ID ' + item.id;
     
     modal.style.display = 'flex';
     requestAnimationFrame(() => modal.classList.add('show'));
@@ -136,90 +146,99 @@ window.addEventListener('resize', () => {
     resizeTimer = setTimeout(initGallery, 300);
 });
 
+/* =========================================
+   🚀 核心修复区：顶栏变色 + 音乐控制
+   ========================================= */
 
-/* --- 🎵 终极版：适配手机返回键 + 强力唤醒 --- */
+// 1. ✅ 修复顶栏变色 (监听 gallery-wrapper 而不是 window)
+function setupNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    const scroller = document.getElementById('gallery-wrapper');
+    
+    if (!navbar || !scroller) return;
 
-var bgm = document.getElementById('bgm');
-var musicBtn = document.getElementById('musicBtn');
-var isMusicPlayed = false; 
+    scroller.addEventListener('scroll', () => {
+        // --- 视觉：变黑 ---
+        if (scroller.scrollTop > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
 
-// 1. 核心开关：控制播放/暂停
+        // --- 听觉：一滑就响 ---
+        // 只要发生了滚动，且还没播放过，就尝试播放
+        if (!isMusicPlayed) {
+            attemptPlayMusic();
+        }
+    });
+}
+
+// 2. 尝试自动播放音乐
+function attemptPlayMusic() {
+    if (!bgm || isMusicPlayed) return;
+
+    bgm.play().then(() => {
+        // 播放成功
+        if(musicBtn) musicBtn.classList.add('playing');
+        isMusicPlayed = true;
+        // 移除监听器省电
+        removeAutoPlayListeners();
+    }).catch(e => {
+        // 失败（被拦截），不管它，下次交互再试
+    });
+}
+
+// 3. 手动开关音乐
 function toggleMusic() {
     if (!bgm) return;
     
     if (bgm.paused) {
         bgm.play().then(() => {
-            musicBtn.classList.add('playing');
-            isMusicPlayed = true; // 标记为已播放
-        }).catch(e => console.log("播放被拦截"));
+            if(musicBtn) musicBtn.classList.add('playing');
+            isMusicPlayed = true;
+        });
     } else {
         bgm.pause();
-        musicBtn.classList.remove('playing');
+        if(musicBtn) musicBtn.classList.remove('playing');
+        // 暂停后允许下次触摸自动播放
+        isMusicPlayed = false; 
+        addAutoPlayListeners();
     }
 }
 
-// 2. 强力自动播放 (手指一碰屏幕就触发)
-function tryAutoPlay() {
-    if (!bgm || !bgm.paused) return; // 如果已经在放了，就不折腾
-
-    bgm.play().then(() => {
-        musicBtn.classList.add('playing');
-        isMusicPlayed = true;
-        
-        // 成功后，卸载监听，省点资源
-        removeAutoPlayListeners();
-    }).catch(e => {
-        // 失败了没事，等着下次触摸
-    });
-}
-
-// 辅助函数：添加监听
+// 4. 添加触摸监听 (手指一碰就响)
 function addAutoPlayListeners() {
-    // 【关键】touchstart 是手机上最灵的，手指一沾屏幕就算
-    document.addEventListener('touchstart', tryAutoPlay, { passive: true });
-    document.addEventListener('click', tryAutoPlay);
-    // scroll 依然留着，万一某些浏览器支持呢
-    document.addEventListener('scroll', tryAutoPlay); 
+    document.addEventListener('touchstart', attemptPlayMusic, { passive: true });
+    document.addEventListener('click', attemptPlayMusic);
 }
 
-// 辅助函数：移除监听
+// 5. 移除监听
 function removeAutoPlayListeners() {
-    document.removeEventListener('touchstart', tryAutoPlay);
-    document.removeEventListener('click', tryAutoPlay);
-    document.removeEventListener('scroll', tryAutoPlay);
+    document.removeEventListener('touchstart', attemptPlayMusic);
+    document.removeEventListener('click', attemptPlayMusic);
 }
 
-// 3. 【新功能】监听链接点击 (拦截“方案”链接)
+// 6. 拦截“方案”点击 (在首页时不刷新)
 document.addEventListener('click', function(e) {
-    var target = e.target.closest('a');
-    // 如果点的是“方案”链接且当前就在首页
+    const target = e.target.closest('a');
     if (target && target.getAttribute('href') === 'index.html') {
-        if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html')) {
-            e.preventDefault(); // 别刷新
-            console.log("拦截刷新，只切歌");
-            // 这里也可以选择 toggleMusic()，看你喜好
+        const path = window.location.pathname;
+        if (path.endsWith('/') || path.endsWith('index.html')) {
+            e.preventDefault(); // 拦截刷新
+            // console.log("已在首页，不刷新");
         }
     }
 });
 
-// 4. 【起搏器】页面显示时（包括按返回键回来）触发
+// 7. 页面回魂检测 (按返回键回来时恢复状态)
 window.addEventListener('pageshow', function(e) {
     if (!bgm) return;
-
-    // 只要发现音乐停了（不管是刚进来，还是返回键回来的）
     if (bgm.paused) {
-        musicBtn.classList.remove('playing'); // 停止转圈
-        isMusicPlayed = false; // 重置状态
-        
-        // 【关键】重新把“触摸就响”的监听器装上！
-        // 之前就是因为返回后没装这个，所以滑不动
-        addAutoPlayListeners(); 
+        if(musicBtn) musicBtn.classList.remove('playing');
+        isMusicPlayed = false;
+        addAutoPlayListeners(); // 重新挂载监听，确保还能滑响
     } else {
-        // 如果真还在响（极少见），让它接着转
-        musicBtn.classList.add('playing');
+        if(musicBtn) musicBtn.classList.add('playing');
         isMusicPlayed = true;
     }
 });
-
-// 5. 首次加载启动
-addAutoPlayListeners();
