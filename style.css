@@ -266,7 +266,7 @@ body::before {
     height: 28px;
     
     /* ✅ 还是强制锁死 25px，保持刚才调好的完美间距 */
-    margin-left: 25px !important; 
+    margin-left: 20px !important; 
     
     /* 颜值设置：保持你原版的半透明背景和金圈 */
     background: rgba(255, 255, 255, 0.05); 
@@ -323,3 +323,4 @@ body::before {
         /* 这里就不改margin了，让上面的 !important 生效，保证对齐 */
     }
 }
+
