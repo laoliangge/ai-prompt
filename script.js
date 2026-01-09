@@ -106,12 +106,11 @@ function setupNavbarScroll() {
             navbar.classList.remove('scrolled');
         }
 
-        // 2. 双重保险：滚动时也尝试触发播放（针对某些允许scroll触发的浏览器）
+        // 2. 双重保险：滚动时也尝试触发播放
         tryAutoPlay();
     });
 
-    // 3. 【关键修复】刚进页面“手滑动不响”的问题
-    // 直接在画廊上监听触摸，保证手指一碰到画廊，立马请求播放
+    // 3. 刚进页面“手滑动不响”的修复
     scroller.addEventListener('touchstart', tryAutoPlay, { passive: true });
 }
 
@@ -161,79 +160,61 @@ window.addEventListener('resize', () => {
 });
 
 
-/* --- 🎵 最终逻辑修正版：解决“关不住”和“滑不响” --- */
-
-/* --- 🎵 智能记忆版：死磕自动播放 + 记住用户选择 --- */
+/* --- 🎵 最终逻辑修正版：带记忆功能（记住播放/暂停状态） --- */
 
 var bgm = document.getElementById('bgm');
 var musicBtn = document.getElementById('musicBtn');
+var isMusicPlayed = false; 
+var isManuallyPaused = false; 
 
-// 1. 初始化：一加载页面，先看看之前是不是“开着”的状态
-// 默认是 'true' (开)，除非用户亲手关过
-var shouldPlay = sessionStorage.getItem('music_status') !== 'false';
-
-// 2. 核心开关：点击按钮时触发
+// 1. 核心开关：控制播放/暂停
 function toggleMusic() {
     if (!bgm) return;
     
     if (bgm.paused) {
-        // --- 用户要开 ---
-        playAudio(true); // true 代表是用户手动点的，强制开
+        // --- 用户要播放 ---
+        bgm.play().then(() => {
+            musicBtn.classList.add('playing');
+            isMusicPlayed = true;
+            isManuallyPaused = false; 
+            // 📝 记在本子上：现在是“播放”状态
+            sessionStorage.setItem('music_status', 'playing');
+        }).catch(e => console.log("播放失败"));
     } else {
-        // --- 用户要关 ---
+        // --- 用户要暂停 ---
         bgm.pause();
         musicBtn.classList.remove('playing');
-        sessionStorage.setItem('music_status', 'false'); // 📝 记在本子上：用户关了！
-        shouldPlay = false;
+        isManuallyPaused = true; 
+        // 📝 记在本子上：现在是“暂停”状态
+        sessionStorage.setItem('music_status', 'paused');
     }
 }
 
-// 3. 统一播放函数 (带重试机制)
-function playAudio(isUserAction) {
+// 2. 智能自动播放
+function tryAutoPlay() {
     if (!bgm) return;
     
-    // 如果用户之前明确关掉了，且这次不是手动点按钮，那就别自作多情
-    if (!shouldPlay && !isUserAction) return;
-
-    var playPromise = bgm.play();
-
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            // 🎉 播放成功
-            musicBtn.classList.add('playing');
-            sessionStorage.setItem('music_status', 'true'); // 📝 记在本子上：正在播放
-            shouldPlay = true;
-            
-            // 既然响了，就没必要监听手指了，卸载监听器省电
-            removeGlobalListeners();
-        }).catch(error => {
-            // 🔇 播放失败 (浏览器拦截)
-            // 别急，保持图标不转，但悄悄把监听器装上，等用户一下手就响
-            addGlobalListeners();
-        });
+    // 🛑 关键：检查记忆！如果用户之前明确选了“暂停”，就坚决不播
+    // (优先读取 sessionStorage，如果没有记录，则看 isManuallyPaused)
+    var savedStatus = sessionStorage.getItem('music_status');
+    if (savedStatus === 'paused' || isManuallyPaused) {
+        return; // 用户不想听，闭嘴
     }
+
+    // 如果已经在放了，就不折腾了
+    if (!bgm.paused) return;
+
+    bgm.play().then(() => {
+        musicBtn.classList.add('playing');
+        isMusicPlayed = true;
+        // 播放成功，更新记忆为“播放”
+        sessionStorage.setItem('music_status', 'playing');
+    }).catch(e => {
+        // 浏览器还没准备好，等待下次交互
+    });
 }
 
-// 4. 全局撒网：捕捉任何交互瞬间
-function autoPlayTrigger() {
-    // 只要触发了一次，就尝试播放
-    playAudio(false);
-}
-
-function addGlobalListeners() {
-    // 既然浏览器不让自动响，那就等用户碰屏幕的那一瞬间响
-    document.addEventListener('touchstart', autoPlayTrigger, { passive: true });
-    document.addEventListener('click', autoPlayTrigger);
-    document.addEventListener('scroll', autoPlayTrigger);
-}
-
-function removeGlobalListeners() {
-    document.removeEventListener('touchstart', autoPlayTrigger);
-    document.removeEventListener('click', autoPlayTrigger);
-    document.removeEventListener('scroll', autoPlayTrigger);
-}
-
-// 5. 监听链接点击 (拦截方案页刷新)
+// 3. 监听链接点击 (拦截“方案”刷新，只切歌/防刷新)
 document.addEventListener('click', function(e) {
     var target = e.target.closest('a');
     if (target && target.getAttribute('href') === 'index.html') {
@@ -243,23 +224,25 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// 6. 回魂补丁 (页面显示时触发)
+// 4. 全局监听用户行为
+document.addEventListener('touchstart', tryAutoPlay, { passive: true });
+document.addEventListener('click', tryAutoPlay);
+
+// 5. 【回魂记忆补丁】页面显示时触发（包括返回键）
 window.addEventListener('pageshow', function(e) {
-    // 检查本子上的记录，如果之前是开着的，回来必须接着奏乐
-    var status = sessionStorage.getItem('music_status');
-    if (status !== 'false') {
-        shouldPlay = true;
-        playAudio(false); // 尝试自动续播
-    } else {
-        // 如果之前是关的，那就保持关
+    if (!bgm) return;
+    
+    // 读取记忆小纸条
+    var savedStatus = sessionStorage.getItem('music_status');
+    
+    // 如果记忆里写着“paused”（暂停），那就保持安静
+    if (savedStatus === 'paused') {
         musicBtn.classList.remove('playing');
-        shouldPlay = false;
+        isManuallyPaused = true; // 锁住，不许自动播
+    } 
+    // 否则（记忆是播放，或者是第一次来没记忆），尝试播放
+    else {
+        isManuallyPaused = false; // 解锁
+        tryAutoPlay(); // 只要用户手一滑，或者浏览器允许，立马播
     }
 });
-
-// 7. 首次加载启动
-// 只要没有明确记录“关闭”，就尝试播放
-if (shouldPlay) {
-    addGlobalListeners(); // 先撒网
-    playAudio(false);     // 再尝试直接播
-}
