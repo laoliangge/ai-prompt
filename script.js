@@ -160,12 +160,26 @@ window.addEventListener('resize', () => {
 });
 
 
-/* --- 🎵 最终逻辑修正版：带记忆功能（记住播放/暂停状态） --- */
+/* --- 🎵 完美修正版：区分“刷新”和“返回” --- */
 
 var bgm = document.getElementById('bgm');
 var musicBtn = document.getElementById('musicBtn');
 var isMusicPlayed = false; 
 var isManuallyPaused = false; 
+
+// 0. 【核心补丁】检测是“刷新”还是“返回”
+// 如果是刷新页面，必须清除记忆，重新开始！
+if (window.performance) {
+    // 现代浏览器检测
+    var navEntries = performance.getEntriesByType('navigation');
+    if (navEntries.length > 0 && navEntries[0].type === 'reload') {
+        sessionStorage.removeItem('music_status'); // 🧹 刷新了，忘掉过去
+    } 
+    // 老旧浏览器检测
+    else if (performance.navigation.type === 1) {
+        sessionStorage.removeItem('music_status'); // 🧹 同上
+    }
+}
 
 // 1. 核心开关：控制播放/暂停
 function toggleMusic() {
@@ -177,7 +191,7 @@ function toggleMusic() {
             musicBtn.classList.add('playing');
             isMusicPlayed = true;
             isManuallyPaused = false; 
-            // 📝 记在本子上：现在是“播放”状态
+            // 📝 记下来：现在是播放状态
             sessionStorage.setItem('music_status', 'playing');
         }).catch(e => console.log("播放失败"));
     } else {
@@ -185,7 +199,7 @@ function toggleMusic() {
         bgm.pause();
         musicBtn.classList.remove('playing');
         isManuallyPaused = true; 
-        // 📝 记在本子上：现在是“暂停”状态
+        // 📝 记下来：现在是暂停状态
         sessionStorage.setItem('music_status', 'paused');
     }
 }
@@ -194,27 +208,26 @@ function toggleMusic() {
 function tryAutoPlay() {
     if (!bgm) return;
     
-    // 🛑 关键：检查记忆！如果用户之前明确选了“暂停”，就坚决不播
-    // (优先读取 sessionStorage，如果没有记录，则看 isManuallyPaused)
+    // 🛑 检查记忆：
+    // 如果用户明确选择了暂停（且不是刷新进来的），那就闭嘴
     var savedStatus = sessionStorage.getItem('music_status');
     if (savedStatus === 'paused' || isManuallyPaused) {
-        return; // 用户不想听，闭嘴
+        return; 
     }
 
-    // 如果已经在放了，就不折腾了
+    // 如果已经在放了，就不重复操作
     if (!bgm.paused) return;
 
     bgm.play().then(() => {
         musicBtn.classList.add('playing');
         isMusicPlayed = true;
-        // 播放成功，更新记忆为“播放”
         sessionStorage.setItem('music_status', 'playing');
     }).catch(e => {
-        // 浏览器还没准备好，等待下次交互
+        // 等待下次交互
     });
 }
 
-// 3. 监听链接点击 (拦截“方案”刷新，只切歌/防刷新)
+// 3. 监听链接点击 (防刷新)
 document.addEventListener('click', function(e) {
     var target = e.target.closest('a');
     if (target && target.getAttribute('href') === 'index.html') {
@@ -224,25 +237,24 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// 4. 全局监听用户行为
+// 4. 全局监听 (触摸、点击)
 document.addEventListener('touchstart', tryAutoPlay, { passive: true });
 document.addEventListener('click', tryAutoPlay);
 
-// 5. 【回魂记忆补丁】页面显示时触发（包括返回键）
+// 5. 【回魂记忆】页面显示时触发
 window.addEventListener('pageshow', function(e) {
     if (!bgm) return;
     
-    // 读取记忆小纸条
     var savedStatus = sessionStorage.getItem('music_status');
     
-    // 如果记忆里写着“paused”（暂停），那就保持安静
+    // 如果记忆是“暂停”，保持静音
     if (savedStatus === 'paused') {
         musicBtn.classList.remove('playing');
-        isManuallyPaused = true; // 锁住，不许自动播
+        isManuallyPaused = true;
     } 
-    // 否则（记忆是播放，或者是第一次来没记忆），尝试播放
+    // 否则（刷新后记忆被清空了，或者记忆是播放），尝试播放
     else {
-        isManuallyPaused = false; // 解锁
-        tryAutoPlay(); // 只要用户手一滑，或者浏览器允许，立马播
+        isManuallyPaused = false;
+        tryAutoPlay(); // 手指一碰就响
     }
 });
