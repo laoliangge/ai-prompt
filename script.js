@@ -90,7 +90,6 @@ function setupInteraction() {
         pauseTimeout = setTimeout(() => { isPaused = false; }, 1000);
     });
 }
-/* --- 放在第 92 行的大括号后面，作为第 93 行开始 --- */
 
 function setupNavbarScroll() {
     const navbar = document.querySelector('.navbar');
@@ -100,15 +99,18 @@ function setupNavbarScroll() {
     if (!navbar || !scroller) return;
 
     scroller.addEventListener('scroll', () => {
-        // 你的自定义参数：滚过 20px 就变色
+        // 1. 你的自定义参数：滚过 20px 就变色
         if (scroller.scrollTop > 20) { 
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
+
+        // 2. 【修复滑动不播放】在这里加了一句！
+        // 只要这里感应到滑动了，就立刻尝试放歌
+        tryAutoPlay();
     });
 }
-
 
 function openModal(item) {
     const modal = document.getElementById('modal');
@@ -155,72 +157,89 @@ window.addEventListener('resize', () => {
     resizeTimer = setTimeout(initGallery, 300);
 });
 
-/* --- 🎵 最终版：智能导航 + 缓存修复 --- */
-/* --- 🎵 最终版：智能导航 + 缓存修复 --- */
+
+/* --- 🎵 最终修复版：解决刷新和返回键不播放问题 --- */
+
 var bgm = document.getElementById('bgm');
 var musicBtn = document.getElementById('musicBtn');
 var isMusicPlayed = false; 
 
 // 1. 核心开关：控制播放/暂停
 function toggleMusic() {
-    if (!bgm) return; // 防止页面没音乐报错
+    if (!bgm) return;
     
     if (bgm.paused) {
         bgm.play().then(() => {
             musicBtn.classList.add('playing');
+            isMusicPlayed = true;
+            removeAutoPlayListeners(); // 既然手动点了，就不用自动监听了
         }).catch(e => console.log("播放被拦截"));
     } else {
         bgm.pause();
         musicBtn.classList.remove('playing');
+        isMusicPlayed = false; // 暂停后允许再次自动触发
+        addAutoPlayListeners(); // 重新监听
     }
 }
 
-// 2. 智能自动播放
+// 2. 智能自动播放 (滑动、点击、触摸都会触发这个)
 function tryAutoPlay() {
+    // 如果已经播过了，或者bgm不存在，直接退出，别浪费资源
     if (isMusicPlayed || !bgm) return; 
+
     bgm.play().then(() => {
         musicBtn.classList.add('playing');
         isMusicPlayed = true;
-        // 成功后移除监听
-        document.removeEventListener('click', tryAutoPlay);
-        document.removeEventListener('touchstart', tryAutoPlay);
-        document.removeEventListener('scroll', tryAutoPlay);
-    }).catch(e => {});
+        // 成功后，立刻卸载监听器，防止重复触发
+        removeAutoPlayListeners();
+    }).catch(e => {
+        // 播放失败（浏览器限制），没事，下次动作再试
+    });
 }
 
-// 3. 【新功能】监听所有链接点击
+// 3. 辅助函数：装监听器
+function addAutoPlayListeners() {
+    document.addEventListener('click', tryAutoPlay);
+    document.addEventListener('touchstart', tryAutoPlay, { passive: true });
+    // document scroll 监听保留备用，虽然主力是 setupNavbarScroll
+    document.addEventListener('scroll', tryAutoPlay); 
+}
+
+// 4. 辅助函数：卸载监听器
+function removeAutoPlayListeners() {
+    document.removeEventListener('click', tryAutoPlay);
+    document.removeEventListener('touchstart', tryAutoPlay);
+    document.removeEventListener('scroll', tryAutoPlay);
+}
+
+// 5. 监听链接点击 (拦截刷新)
 document.addEventListener('click', function(e) {
-    // 找到被点击的链接
     var target = e.target.closest('a');
-    
-    // 如果点的是“方案”链接（href="index.html"）
     if (target && target.getAttribute('href') === 'index.html') {
-        // 检查当前是不是已经在首页了
         if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html')) {
-            e.preventDefault(); // 阻止刷新！
-            console.log("已在首页，拦截刷新，只切歌");
-            // 你也可以在这里加一句 toggleMusic() 如果你想点文字也开关音乐
+            e.preventDefault(); 
+            // 可以在这里决定点文字要不要切歌，目前保持不动
         }
     }
-    
-    // 剩下的情况（比如去 admin.html）浏览器会自动处理，不用管
 });
 
-// 4. 【新功能】回魂补丁 (修复按返回键图标空转)
+// 6. 【回魂补丁】修复按返回键回来不响的问题
 window.addEventListener('pageshow', function(e) {
-    // 每次页面显示（包括按返回键回来）都执行
-    if (bgm) {
-        if (bgm.paused) {
-            // 如果声音停了，把转圈也停了，实事求是
-            musicBtn.classList.remove('playing');
-        } else {
-            // 如果声音还在响（极少见），确保在转
-            musicBtn.classList.add('playing');
-        }
+    if (!bgm) return;
+
+    if (bgm.paused) {
+        // 发现音乐停了（说明是返回键回来的，或者刚进来）
+        musicBtn.classList.remove('playing');
+        isMusicPlayed = false; 
+        
+        // 【关键】必须重新装上监听器！
+        // 之前就是少了这一步，导致返回后滑动没反应
+        addAutoPlayListeners(); 
+    } else {
+        musicBtn.classList.add('playing');
+        isMusicPlayed = true;
     }
 });
 
-// 启动监听
-document.addEventListener('click', tryAutoPlay);
-document.addEventListener('touchstart', tryAutoPlay);
-document.addEventListener('scroll', tryAutoPlay);
+// 7. 首次加载启动
+addAutoPlayListeners();
