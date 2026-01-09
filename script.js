@@ -162,121 +162,105 @@ window.addEventListener('resize', () => {
 
 
 /* --- 🎵 最终逻辑修正版：解决“关不住”和“滑不响” --- */
-/* --- 🎵 霸道地雷版：专治“滑动不响” --- */
 
-/* --- 🎵 核弹级自动播放：全屏触控唤醒 + 记忆模式 --- */
+/* --- 🎵 流氓土匪版：不响不罢休 + 强制清除记忆 --- */
 
-// 1. 把它包起来，确保页面加载完了再执行，防止找不到元素
+// 1. 放在这里确保 HTML 加载完
 document.addEventListener('DOMContentLoaded', function() {
     
     var bgm = document.getElementById('bgm');
     var musicBtn = document.getElementById('musicBtn');
     
-    // 安全检查：如果连音响都没有，就别折腾了
     if (!bgm || !musicBtn) return;
 
-    // 2. 读取记忆：用户上次关了吗？
-    // 默认是 'true' (要播放)，只有用户亲手关过才是 'false'
-    var shouldPlay = sessionStorage.getItem('music_status') !== 'false';
-    var hasInteracted = false; // 标记：是否已经成功唤醒过
+    // 🧨 强制清除之前的“暂停”记忆！(测试专用)
+    // 只要你刷新页面，我就忘了你关过音乐这回事，必须重新自动放！
+    sessionStorage.removeItem('music_status'); 
 
-    // --- 核心功能 A：开关按钮 ---
-    window.toggleMusic = function() { // 挂在window上确保HTML能调用
+    // 变量：是否正在播放
+    var isPlaying = false;
+
+    // --- A. 手动开关 (逻辑最简单) ---
+    window.toggleMusic = function() {
         if (bgm.paused) {
-            // 手动开
-            bgm.play().then(() => {
-                updateIcon(true);
-                sessionStorage.setItem('music_status', 'true');
-                shouldPlay = true;
-            }).catch(e => console.log("播放失败:", e));
+            bgm.play();
+            musicBtn.classList.add('playing');
+            isPlaying = true;
         } else {
-            // 手动关
             bgm.pause();
-            updateIcon(false);
-            sessionStorage.setItem('music_status', 'false');
-            shouldPlay = false;
+            musicBtn.classList.remove('playing');
+            isPlaying = false;
         }
     };
 
-    // --- 核心功能 B：全屏唤醒 (滑动/触摸/点击) ---
-    function tryWakeUpMusic() {
-        // 1. 如果用户明确只要静音，绝不打扰
-        if (!shouldPlay) return;
-
-        // 2. 如果已经在放了，赶紧拆除监听，别浪费性能
+    // --- B. 霸王硬上弓 (自动播放核心) ---
+    function forcePlay() {
+        // 如果已经在放了，就别折腾了
         if (!bgm.paused) {
-            removeGlobalListeners();
+            musicBtn.classList.add('playing');
             return;
         }
 
-        // 3. 尝试播放 (这是关键！)
-        // 只要用户碰了屏幕，立刻申请播放
-        var playPromise = bgm.play();
+        // 尝试播放
+        var promise = bgm.play();
 
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                // 🎉 响了！成功了！
-                updateIcon(true);
-                // 只要响了一次，就彻底移除所有监听，世界清静了
-                removeGlobalListeners();
+        if (promise !== undefined) {
+            promise.then(() => {
+                // 🎉 终于响了！
+                musicBtn.classList.add('playing');
+                isPlaying = true;
+                
+                // 响了之后，稍微讲点武德，把监听器拆了，省电
+                removeTraps();
             }).catch(error => {
-                // 🔇 失败了 (浏览器觉得刚才那一下滑动不算数)
-                // 没关系，监听器留着，等用户下一次手指动作，继续试！
+                // 🔇 还没响？(浏览器拦截了)
+                // 没关系，我不报错，我也不拆监听器
+                // 等你手指头下一次动弹，我接着试！
             });
         }
     }
 
-    // --- 辅助：图标控制 ---
-    function updateIcon(isPlaying) {
-        if (isPlaying) {
-            musicBtn.classList.add('playing');
-        } else {
-            musicBtn.classList.remove('playing');
-        }
-    }
-
-    // --- 辅助：撒网监听 ---
-    function addGlobalListeners() {
-        // capture: true (捕获模式) -> 这就是“核弹”
-        // 意思是：手指碰到屏幕的瞬间，在所有点击事件发生前，我先截获！
-        document.addEventListener('touchstart', tryWakeUpMusic, true);
-        document.addEventListener('touchend', tryWakeUpMusic, true); // 滑动结束松手时也试一下
-        document.addEventListener('click', tryWakeUpMusic, true);
-        document.addEventListener('scroll', tryWakeUpMusic, true); // 尽管scroll很难触发，但也加上
-    }
-
-    function removeGlobalListeners() {
-        document.removeEventListener('touchstart', tryWakeUpMusic, true);
-        document.removeEventListener('touchend', tryWakeUpMusic, true);
-        document.removeEventListener('click', tryWakeUpMusic, true);
-        document.removeEventListener('scroll', tryWakeUpMusic, true);
-    }
-
-    // --- 初始化逻辑 ---
-    
-    // 1. 刚进页面，先看记忆，如果该播，就立马撒网等待用户操作
-    if (shouldPlay) {
-        updateIcon(false); // 先别转，等响了再转
-        addGlobalListeners(); // 埋好地雷
-        // 顺便试着直接播一下 (万一浏览器心情好呢)
-        bgm.play().then(() => { updateIcon(true); removeGlobalListeners(); }).catch(() => {});
-    } else {
-        updateIcon(false);
-    }
-
-    // 2. 回魂补丁 (解决从发布页返回不响)
-    window.addEventListener('pageshow', function(e) {
-        // 重新读取记忆
-        shouldPlay = sessionStorage.getItem('music_status') !== 'false';
+    // --- C. 布下天罗地网 ---
+    function setTraps() {
+        // capture: true (true是精髓) -> 只要碰屏幕，我比所有按钮都先知道
+        document.addEventListener('touchstart', forcePlay, true);
+        document.addEventListener('click', forcePlay, true);
         
-        if (shouldPlay && bgm.paused) {
-            addGlobalListeners(); // 重新埋雷，等你手滑
-        } else if (!bgm.paused) {
-            updateIcon(true); // 如果还在响，确保图标在转
+        // 👇 专治“滑动不响”：手指离开屏幕的那一瞬间，成功率最高！
+        document.addEventListener('touchend', forcePlay, true); 
+    }
+
+    function removeTraps() {
+        document.removeEventListener('touchstart', forcePlay, true);
+        document.removeEventListener('click', forcePlay, true);
+        document.removeEventListener('touchend', forcePlay, true);
+    }
+
+    // --- D. 执行顺序 ---
+    
+    // 1. 刚进页面，先布雷
+    setTraps();
+    
+    // 2. 试着偷偷播一下 (万一运气好呢)
+    bgm.play().then(() => {
+        musicBtn.classList.add('playing');
+        removeTraps(); // 运气真好，直接拆雷
+    }).catch(() => {
+        // 运气不好，保持地雷阵，等用户上手
+    });
+
+    // 3. 回魂补丁 (解决返回不响)
+    // 每次页面重新显示（包括从发布页退回来），重新布雷！
+    window.addEventListener('pageshow', function(e) {
+        if (bgm.paused) {
+            musicBtn.classList.remove('playing');
+            setTraps(); // 兄弟们，抄家伙，准备干活
+        } else {
+            musicBtn.classList.add('playing');
         }
     });
 
-    // 3. 拦截链接点击 (防刷新)
+    // 4. 拦截文字链接刷新
     document.addEventListener('click', function(e) {
         var target = e.target.closest('a');
         if (target && target.getAttribute('href') === 'index.html') {
