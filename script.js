@@ -163,76 +163,97 @@ window.addEventListener('resize', () => {
 
 /* --- 🎵 最终逻辑修正版：解决“关不住”和“滑不响” --- */
 
+/* --- 🎵 终极修正版：急先锋唤醒 + 手动开关保护 --- */
+
 var bgm = document.getElementById('bgm');
 var musicBtn = document.getElementById('musicBtn');
 var isMusicPlayed = false; 
-var isManuallyPaused = false; // 🚫 新增标记：记录用户是否亲手暂停了音乐
+var isManuallyPaused = false; // 🛑 标记：是否是用户亲手关的
 
 // 1. 核心开关：控制播放/暂停
 function toggleMusic() {
     if (!bgm) return;
     
     if (bgm.paused) {
-        // 用户想听：播放
+        // 用户主动点播放
         bgm.play().then(() => {
             musicBtn.classList.add('playing');
             isMusicPlayed = true;
-            isManuallyPaused = false; // ✅ 解除“免打扰”，允许后续自动逻辑
+            isManuallyPaused = false; // ✅ 解锁，允许后续自动播放
         }).catch(e => console.log("播放失败"));
     } else {
-        // 用户想停：暂停
+        // 用户主动点暂停
         bgm.pause();
         musicBtn.classList.remove('playing');
-        isManuallyPaused = true; // 🚫 开启“免打扰”！这时候谁滑也没用
+        isManuallyPaused = true; // 🛑 锁住！用户嫌吵关了，之后滑屏也不许自动响
     }
 }
 
-// 2. 智能自动播放
-function tryAutoPlay() {
-    // 如果音乐文件不存在，或者已经在放了，直接退
-    if (!bgm || !bgm.paused) return;
-    
-    // 🚫 关键判断：如果用户亲手暂停过（开启了免打扰），那就别自作多情自动放了
+// 2. 霸道唤醒逻辑 (专治“刚进页面不响”)
+function forceAutoPlay() {
+    // A. 如果用户亲手关过，绝对闭嘴，别烦人
     if (isManuallyPaused) return;
 
+    // B. 如果已经在放了，或者是空变量，啥也别干
+    if (!bgm || !bgm.paused) return;
+
+    // C. 尝试播放！
     bgm.play().then(() => {
         musicBtn.classList.add('playing');
         isMusicPlayed = true;
-    }).catch(e => {
-        // 浏览器还没准备好，等待下次交互
+        // 🎉 成功了！卸载监听器，省电
+        removeGlobalListeners();
+    }).catch(error => {
+        // 失败了（可能浏览器还是觉得权限不够），没事，下次触摸再试
+        // console.log("唤醒失败，等待下一次交互");
     });
 }
 
-// 3. 监听链接点击 (拦截“方案”刷新，只切歌/防刷新)
+// 3. 全局撒网：只要手指一碰屏幕，立马尝试唤醒
+function addGlobalListeners() {
+    // useCapture: true (那个 true) 是关键！
+    // 意思是：在这一指头点到任何东西之前，我先截获事件来放歌
+    document.addEventListener('touchstart', forceAutoPlay, true); 
+    document.addEventListener('click', forceAutoPlay, true);
+    
+    // 依然保留 scroll 作为备选，万一某些浏览器支持呢
+    document.addEventListener('scroll', forceAutoPlay, true);
+}
+
+function removeGlobalListeners() {
+    document.removeEventListener('touchstart', forceAutoPlay, true);
+    document.removeEventListener('click', forceAutoPlay, true);
+    document.removeEventListener('scroll', forceAutoPlay, true);
+}
+
+// 4. 监听链接点击 (防刷新)
 document.addEventListener('click', function(e) {
     var target = e.target.closest('a');
     if (target && target.getAttribute('href') === 'index.html') {
         if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html')) {
             e.preventDefault(); 
-            // 这里不做音乐操作，只为了防刷新
         }
     }
 });
 
-// 4. 全局监听用户行为 (触摸、点击)
-// 为了解决“刚进页面滑不响”，这里必须监听 touchstart
-document.addEventListener('touchstart', tryAutoPlay, { passive: true });
-document.addEventListener('click', tryAutoPlay);
-
-// 5. 回魂补丁 (按返回键回来恢复状态)
+// 5. 回魂补丁 (按返回键回来)
 window.addEventListener('pageshow', function(e) {
     if (!bgm) return;
     
+    // 如果音乐停了，说明需要重新唤醒
     if (bgm.paused) {
         musicBtn.classList.remove('playing');
-        // 页面刚显示时，重置手动暂停状态，给自动播放一个机会
-        // 如果你想让“返回”后保持静音，就把下面这行删掉。
-        // 但通常逻辑是：新进页面（或返回）应该允许自动播放。
-        isManuallyPaused = false; 
-        tryAutoPlay(); // 尝试触发一次
+        
+        // 只有当用户之前没亲手关过，才尝试自动唤醒
+        if (!isManuallyPaused) {
+            isMusicPlayed = false;
+            addGlobalListeners(); // 重新撒网
+        }
     } else {
         musicBtn.classList.add('playing');
         isMusicPlayed = true;
-        isManuallyPaused = false;
     }
 });
+
+// 🚀 脚本加载完，立刻开始撒网监听
+addGlobalListeners();
