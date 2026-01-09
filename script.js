@@ -106,10 +106,13 @@ function setupNavbarScroll() {
             navbar.classList.remove('scrolled');
         }
 
-        // 2. 【修复滑动不播放】在这里加了一句！
-        // 只要这里感应到滑动了，就立刻尝试放歌
+        // 2. 双重保险：滚动时也尝试触发播放（针对某些允许scroll触发的浏览器）
         tryAutoPlay();
     });
+
+    // 3. 【关键修复】刚进页面“手滑动不响”的问题
+    // 直接在画廊上监听触摸，保证手指一碰到画廊，立马请求播放
+    scroller.addEventListener('touchstart', tryAutoPlay, { passive: true });
 }
 
 function openModal(item) {
@@ -158,88 +161,78 @@ window.addEventListener('resize', () => {
 });
 
 
-/* --- 🎵 最终修复版：解决刷新和返回键不播放问题 --- */
+/* --- 🎵 最终逻辑修正版：解决“关不住”和“滑不响” --- */
 
 var bgm = document.getElementById('bgm');
 var musicBtn = document.getElementById('musicBtn');
 var isMusicPlayed = false; 
+var isManuallyPaused = false; // 🚫 新增标记：记录用户是否亲手暂停了音乐
 
 // 1. 核心开关：控制播放/暂停
 function toggleMusic() {
     if (!bgm) return;
     
     if (bgm.paused) {
+        // 用户想听：播放
         bgm.play().then(() => {
             musicBtn.classList.add('playing');
             isMusicPlayed = true;
-            removeAutoPlayListeners(); // 既然手动点了，就不用自动监听了
-        }).catch(e => console.log("播放被拦截"));
+            isManuallyPaused = false; // ✅ 解除“免打扰”，允许后续自动逻辑
+        }).catch(e => console.log("播放失败"));
     } else {
+        // 用户想停：暂停
         bgm.pause();
         musicBtn.classList.remove('playing');
-        isMusicPlayed = false; // 暂停后允许再次自动触发
-        addAutoPlayListeners(); // 重新监听
+        isManuallyPaused = true; // 🚫 开启“免打扰”！这时候谁滑也没用
     }
 }
 
-// 2. 智能自动播放 (滑动、点击、触摸都会触发这个)
+// 2. 智能自动播放
 function tryAutoPlay() {
-    // 如果已经播过了，或者bgm不存在，直接退出，别浪费资源
-    if (isMusicPlayed || !bgm) return; 
+    // 如果音乐文件不存在，或者已经在放了，直接退
+    if (!bgm || !bgm.paused) return;
+    
+    // 🚫 关键判断：如果用户亲手暂停过（开启了免打扰），那就别自作多情自动放了
+    if (isManuallyPaused) return;
 
     bgm.play().then(() => {
         musicBtn.classList.add('playing');
         isMusicPlayed = true;
-        // 成功后，立刻卸载监听器，防止重复触发
-        removeAutoPlayListeners();
     }).catch(e => {
-        // 播放失败（浏览器限制），没事，下次动作再试
+        // 浏览器还没准备好，等待下次交互
     });
 }
 
-// 3. 辅助函数：装监听器
-function addAutoPlayListeners() {
-    document.addEventListener('click', tryAutoPlay);
-    document.addEventListener('touchstart', tryAutoPlay, { passive: true });
-    // document scroll 监听保留备用，虽然主力是 setupNavbarScroll
-    document.addEventListener('scroll', tryAutoPlay); 
-}
-
-// 4. 辅助函数：卸载监听器
-function removeAutoPlayListeners() {
-    document.removeEventListener('click', tryAutoPlay);
-    document.removeEventListener('touchstart', tryAutoPlay);
-    document.removeEventListener('scroll', tryAutoPlay);
-}
-
-// 5. 监听链接点击 (拦截刷新)
+// 3. 监听链接点击 (拦截“方案”刷新，只切歌/防刷新)
 document.addEventListener('click', function(e) {
     var target = e.target.closest('a');
     if (target && target.getAttribute('href') === 'index.html') {
         if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html')) {
             e.preventDefault(); 
-            // 可以在这里决定点文字要不要切歌，目前保持不动
+            // 这里不做音乐操作，只为了防刷新
         }
     }
 });
 
-// 6. 【回魂补丁】修复按返回键回来不响的问题
+// 4. 全局监听用户行为 (触摸、点击)
+// 为了解决“刚进页面滑不响”，这里必须监听 touchstart
+document.addEventListener('touchstart', tryAutoPlay, { passive: true });
+document.addEventListener('click', tryAutoPlay);
+
+// 5. 回魂补丁 (按返回键回来恢复状态)
 window.addEventListener('pageshow', function(e) {
     if (!bgm) return;
-
+    
     if (bgm.paused) {
-        // 发现音乐停了（说明是返回键回来的，或者刚进来）
         musicBtn.classList.remove('playing');
-        isMusicPlayed = false; 
-        
-        // 【关键】必须重新装上监听器！
-        // 之前就是少了这一步，导致返回后滑动没反应
-        addAutoPlayListeners(); 
+        // 页面刚显示时，重置手动暂停状态，给自动播放一个机会
+        // 如果你想让“返回”后保持静音，就把下面这行删掉。
+        // 但通常逻辑是：新进页面（或返回）应该允许自动播放。
+        isManuallyPaused = false; 
+        tryAutoPlay(); // 尝试触发一次
     } else {
         musicBtn.classList.add('playing');
         isMusicPlayed = true;
+        isManuallyPaused = false;
     }
 });
-
-// 7. 首次加载启动
-addAutoPlayListeners();
