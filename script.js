@@ -165,12 +165,13 @@ window.addEventListener('resize', () => {
 
 /* --- 🎵 终极修正版：急先锋唤醒 + 手动开关保护 --- */
 
+/* --- 🎵 终极修正版：增加“松手”检测，专治滑动不响 --- */
+
 var bgm = document.getElementById('bgm');
 var musicBtn = document.getElementById('musicBtn');
-var isMusicPlayed = false; 
 var isManuallyPaused = false; // 🛑 标记：是否是用户亲手关的
 
-// 1. 核心开关：控制播放/暂停
+// 1. 核心开关：控制播放/暂停 (逻辑不变)
 function toggleMusic() {
     if (!bgm) return;
     
@@ -178,52 +179,56 @@ function toggleMusic() {
         // 用户主动点播放
         bgm.play().then(() => {
             musicBtn.classList.add('playing');
-            isMusicPlayed = true;
             isManuallyPaused = false; // ✅ 解锁，允许后续自动播放
         }).catch(e => console.log("播放失败"));
     } else {
         // 用户主动点暂停
         bgm.pause();
         musicBtn.classList.remove('playing');
-        isManuallyPaused = true; // 🛑 锁住！用户嫌吵关了，之后滑屏也不许自动响
+        isManuallyPaused = true; // 🛑 锁住！用户亲手关的，严禁自动播放
     }
 }
 
-// 2. 霸道唤醒逻辑 (专治“刚进页面不响”)
-function forceAutoPlay() {
-    // A. 如果用户亲手关过，绝对闭嘴，别烦人
+// 2. 霸道唤醒逻辑 (增加了 touchend 支持)
+function tryUnlockAudio() {
+    // A. 如果用户亲手关过，绝对闭嘴
     if (isManuallyPaused) return;
 
-    // B. 如果已经在放了，或者是空变量，啥也别干
+    // B. 如果已经在放了，啥也别干
     if (!bgm || !bgm.paused) return;
 
     // C. 尝试播放！
-    bgm.play().then(() => {
-        musicBtn.classList.add('playing');
-        isMusicPlayed = true;
-        // 🎉 成功了！卸载监听器，省电
-        removeGlobalListeners();
-    }).catch(error => {
-        // 失败了（可能浏览器还是觉得权限不够），没事，下次触摸再试
-        // console.log("唤醒失败，等待下一次交互");
-    });
+    var playPromise = bgm.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            // 🎉 成功了！
+            musicBtn.classList.add('playing');
+            // 成功后，卸载所有监听器，别再烦浏览器了
+            removeGlobalListeners();
+        }).catch(error => {
+            // 失败了（说明这次触摸被判定为滚动，权限不够）
+            // 没关系，监听器还在，等下一次松手或点击再试
+        });
+    }
 }
 
-// 3. 全局撒网：只要手指一碰屏幕，立马尝试唤醒
+// 3. 全局撒网：按下、松手、点击，全都要监听！
 function addGlobalListeners() {
-    // useCapture: true (那个 true) 是关键！
-    // 意思是：在这一指头点到任何东西之前，我先截获事件来放歌
-    document.addEventListener('touchstart', forceAutoPlay, true); 
-    document.addEventListener('click', forceAutoPlay, true);
+    // ✋ 按下屏幕瞬间 (捕获模式)
+    document.addEventListener('touchstart', tryUnlockAudio, true);
     
-    // 依然保留 scroll 作为备选，万一某些浏览器支持呢
-    document.addEventListener('scroll', forceAutoPlay, true);
+    // ☝️ 【新增】手指离开屏幕瞬间 (滑完屏松手时往往能成功)
+    document.addEventListener('touchend', tryUnlockAudio, true);
+    
+    // 🖱 点击
+    document.addEventListener('click', tryUnlockAudio, true);
 }
 
 function removeGlobalListeners() {
-    document.removeEventListener('touchstart', forceAutoPlay, true);
-    document.removeEventListener('click', forceAutoPlay, true);
-    document.removeEventListener('scroll', forceAutoPlay, true);
+    document.removeEventListener('touchstart', tryUnlockAudio, true);
+    document.removeEventListener('touchend', tryUnlockAudio, true);
+    document.removeEventListener('click', tryUnlockAudio, true);
 }
 
 // 4. 监听链接点击 (防刷新)
@@ -240,20 +245,18 @@ document.addEventListener('click', function(e) {
 window.addEventListener('pageshow', function(e) {
     if (!bgm) return;
     
-    // 如果音乐停了，说明需要重新唤醒
     if (bgm.paused) {
         musicBtn.classList.remove('playing');
-        
-        // 只有当用户之前没亲手关过，才尝试自动唤醒
+        // 只有当用户之前没亲手关过，才重新撒网
         if (!isManuallyPaused) {
-            isMusicPlayed = false;
-            addGlobalListeners(); // 重新撒网
+            addGlobalListeners(); 
         }
     } else {
         musicBtn.classList.add('playing');
-        isMusicPlayed = true;
+        // 如果正在响，确保解锁，防止逻辑混乱
+        isManuallyPaused = false;
     }
 });
 
-// 🚀 脚本加载完，立刻开始撒网监听
+// 🚀 脚本加载完，立马开始撒网
 addGlobalListeners();
