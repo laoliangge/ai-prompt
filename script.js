@@ -162,76 +162,77 @@ window.addEventListener('resize', () => {
 
 
 /* --- 🎵 最终逻辑修正版：解决“关不住”和“滑不响” --- */
-
-/* --- 🎵 终极修正版：急先锋唤醒 + 手动开关保护 --- */
-
-/* --- 🎵 终极修正版：增加“松手”检测，专治滑动不响 --- */
+/* --- 🎵 智能记忆版：死磕自动播放 + 记住用户选择 --- */
 
 var bgm = document.getElementById('bgm');
 var musicBtn = document.getElementById('musicBtn');
-var isManuallyPaused = false; // 🛑 标记：是否是用户亲手关的
 
-// 1. 核心开关：控制播放/暂停 (逻辑不变)
+// 1. 初始化：一加载页面，先看看之前是不是“开着”的状态
+// 默认是 'true' (开)，除非用户亲手关过
+var shouldPlay = sessionStorage.getItem('music_status') !== 'false';
+
+// 2. 核心开关：点击按钮时触发
 function toggleMusic() {
     if (!bgm) return;
     
     if (bgm.paused) {
-        // 用户主动点播放
-        bgm.play().then(() => {
-            musicBtn.classList.add('playing');
-            isManuallyPaused = false; // ✅ 解锁，允许后续自动播放
-        }).catch(e => console.log("播放失败"));
+        // --- 用户要开 ---
+        playAudio(true); // true 代表是用户手动点的，强制开
     } else {
-        // 用户主动点暂停
+        // --- 用户要关 ---
         bgm.pause();
         musicBtn.classList.remove('playing');
-        isManuallyPaused = true; // 🛑 锁住！用户亲手关的，严禁自动播放
+        sessionStorage.setItem('music_status', 'false'); // 📝 记在本子上：用户关了！
+        shouldPlay = false;
     }
 }
 
-// 2. 霸道唤醒逻辑 (增加了 touchend 支持)
-function tryUnlockAudio() {
-    // A. 如果用户亲手关过，绝对闭嘴
-    if (isManuallyPaused) return;
-
-    // B. 如果已经在放了，啥也别干
-    if (!bgm || !bgm.paused) return;
-
-    // C. 尝试播放！
-    var playPromise = bgm.play();
+// 3. 统一播放函数 (带重试机制)
+function playAudio(isUserAction) {
+    if (!bgm) return;
     
+    // 如果用户之前明确关掉了，且这次不是手动点按钮，那就别自作多情
+    if (!shouldPlay && !isUserAction) return;
+
+    var playPromise = bgm.play();
+
     if (playPromise !== undefined) {
         playPromise.then(() => {
-            // 🎉 成功了！
+            // 🎉 播放成功
             musicBtn.classList.add('playing');
-            // 成功后，卸载所有监听器，别再烦浏览器了
+            sessionStorage.setItem('music_status', 'true'); // 📝 记在本子上：正在播放
+            shouldPlay = true;
+            
+            // 既然响了，就没必要监听手指了，卸载监听器省电
             removeGlobalListeners();
         }).catch(error => {
-            // 失败了（说明这次触摸被判定为滚动，权限不够）
-            // 没关系，监听器还在，等下一次松手或点击再试
+            // 🔇 播放失败 (浏览器拦截)
+            // 别急，保持图标不转，但悄悄把监听器装上，等用户一下手就响
+            addGlobalListeners();
         });
     }
 }
 
-// 3. 全局撒网：按下、松手、点击，全都要监听！
+// 4. 全局撒网：捕捉任何交互瞬间
+function autoPlayTrigger() {
+    // 只要触发了一次，就尝试播放
+    playAudio(false);
+}
+
 function addGlobalListeners() {
-    // ✋ 按下屏幕瞬间 (捕获模式)
-    document.addEventListener('touchstart', tryUnlockAudio, true);
-    
-    // ☝️ 【新增】手指离开屏幕瞬间 (滑完屏松手时往往能成功)
-    document.addEventListener('touchend', tryUnlockAudio, true);
-    
-    // 🖱 点击
-    document.addEventListener('click', tryUnlockAudio, true);
+    // 既然浏览器不让自动响，那就等用户碰屏幕的那一瞬间响
+    document.addEventListener('touchstart', autoPlayTrigger, { passive: true });
+    document.addEventListener('click', autoPlayTrigger);
+    document.addEventListener('scroll', autoPlayTrigger);
 }
 
 function removeGlobalListeners() {
-    document.removeEventListener('touchstart', tryUnlockAudio, true);
-    document.removeEventListener('touchend', tryUnlockAudio, true);
-    document.removeEventListener('click', tryUnlockAudio, true);
+    document.removeEventListener('touchstart', autoPlayTrigger);
+    document.removeEventListener('click', autoPlayTrigger);
+    document.removeEventListener('scroll', autoPlayTrigger);
 }
 
-// 4. 监听链接点击 (防刷新)
+// 5. 监听链接点击 (拦截方案页刷新)
 document.addEventListener('click', function(e) {
     var target = e.target.closest('a');
     if (target && target.getAttribute('href') === 'index.html') {
@@ -241,22 +242,24 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// 5. 回魂补丁 (按返回键回来)
+// 6. 回魂补丁 (页面显示时触发)
 window.addEventListener('pageshow', function(e) {
-    if (!bgm) return;
-    
-    if (bgm.paused) {
-        musicBtn.classList.remove('playing');
-        // 只有当用户之前没亲手关过，才重新撒网
-        if (!isManuallyPaused) {
-            addGlobalListeners(); 
-        }
+    // 检查本子上的记录，如果之前是开着的，回来必须接着奏乐
+    var status = sessionStorage.getItem('music_status');
+    if (status !== 'false') {
+        shouldPlay = true;
+        playAudio(false); // 尝试自动续播
     } else {
-        musicBtn.classList.add('playing');
-        // 如果正在响，确保解锁，防止逻辑混乱
-        isManuallyPaused = false;
+        // 如果之前是关的，那就保持关
+        musicBtn.classList.remove('playing');
+        shouldPlay = false;
     }
 });
 
-// 🚀 脚本加载完，立马开始撒网
-addGlobalListeners();
+// 7. 首次加载启动
+// 只要没有明确记录“关闭”，就尝试播放
+if (shouldPlay) {
+    addGlobalListeners(); // 先撒网
+    playAudio(false);     // 再尝试直接播
+}
+
