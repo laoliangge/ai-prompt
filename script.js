@@ -153,10 +153,22 @@ function copyPrompt() {
     });
 }
 
+
+// 🟢 修复核心：键盘收起防重置逻辑 (已修复闪现 Bug)
 let resizeTimer;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(initGallery, 300);
+    resizeTimer = setTimeout(() => {
+        // 🔥 核心补丁：如果数据还没加载回来（长度为0），说明还在转圈
+        // 这时候绝对不能刷新，否则会把 Loading 动画打断，变成"未找到内容"
+        if (allData.length === 0) return; 
+
+        const activePill = document.querySelector('.cat-pill.active');
+        // 如果 activePill 存在 (说明不是在搜索模式)，才刷新
+        if (activePill) {
+            renderGallery(activePill.innerText);
+        }
+    }, 300);
 });
 
 
@@ -258,3 +270,4 @@ window.addEventListener('pageshow', function(e) {
         tryAutoPlay(); // 手指一碰就响
     }
 });
+
